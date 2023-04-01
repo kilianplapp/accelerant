@@ -44,7 +44,7 @@ async function webgl() {
 	}
 	catch (e) { }
 
-	//var m = "";
+	var m = "";
 
 	var n = new Uint8Array(width * height * 4);
 	ctx.readPixels(0, 0, width, height, ctx.RGBA, ctx.UNSIGNED_BYTE, n);
@@ -74,7 +74,7 @@ function obfuscate(str) {
 	}
 	return btoa(result);
 }
-payload = {
+var payload = {
 	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host, // hostname
 	"otrh": window.outerHeight, // outerheight
