@@ -1,7 +1,7 @@
 # nixpacks.toml
 
 [phases.setup]
-nixPkgs = ['python', 'yarn']
+nixPkgs = ['python', 'yarn', 'uwsgi]
 
 [phases.install]
 cmd = ['python -m pip install -r requirements.txt']
