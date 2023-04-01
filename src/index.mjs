@@ -96,5 +96,5 @@ fetch(API_ENDPOINT, {
 	headers: { 'Content-Type': 'text/plain' },
 	body: JSON.stringify({ 'data': obfuscatedData })
 }).then((response)=> response.json())
-.then((data) =>document.cookie = `accelerant=${response.accelerant}`);
+.then((data) =>document.cookie = `accelerant=${data.accelerant}`);
 
