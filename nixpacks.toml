@@ -3,8 +3,11 @@
 [phases.setup]
 nixPkgs = ['python', 'yarn']
 
+[phases.install]
+cmd = ['python -m pip install -r requirements.txt']
+
 [phases.build]
-cmds = ['yarn run build', 'python -m pip install -r requirements.txt']
+cmds = ['yarn run build']
 
 [start]
 cmd = 'python app.py'
