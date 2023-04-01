@@ -1,13 +1,10 @@
 # nixpacks.toml
 
 [phases.setup]
-nixPkgs = ['python', 'yarn', 'uwsgi']
-
-[phases.install]
-cmd = ['python -m pip install -r requirements.txt']
+nixPkgs = ['yarn']
 
 [phases.build]
 cmds = ['yarn run build']
 
 [start]
-cmd = 'python -m gunicorn --w 15 --b 0.0.0.0:80 app:app'
+cmd = 'railway run'
