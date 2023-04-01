@@ -120,7 +120,7 @@ def mm():
                 'user-agent': request.headers.get('User-Agent'),
             }
         )
-        return _corsify_actual_response(jsonify({"success": True}), id)
+        return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
 
 
 def _build_cors_preflight_response():

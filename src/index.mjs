@@ -91,20 +91,9 @@ var payload = {
 const obfuscatedData = obfuscate(JSON.stringify(payload));
 
 // Make a POST request to the API endpoint with the obfuscated data as the request body
-fetch(API_ENDPOINT, {
+response = await fetch(API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
 	body: JSON.stringify({ 'data': obfuscatedData })
-})
-	.then(response => {
-		if (response.ok) {
-			console.log(response)
-			document.cookie = `accelerant=s${response.headers.get("x-accelerant-id")}` 
-			
-		} else {
-			console.error('Failed!');
-		}
-	})
-	.catch(error => {
-		console.error('Failed!');
-	});
+}).JSON()
+document.cookie = `accelerant=${response.accelerant}`
