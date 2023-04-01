@@ -113,7 +113,7 @@ def mm():
         db.Accelerant.insert_one(
             {
                 'id': id,
-                'headers': request.headers,
+                'headers': dict(request.headers),
                 'accelerant': accelerant,
                 'ip': request.remote_addr,
                 'time': time.ctime(),
