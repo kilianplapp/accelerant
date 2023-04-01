@@ -1,4 +1,4 @@
-const API_ENDPOINT = "https://kilianpl.app/api/accelerant"
+const API_ENDPOINT = "https://prod.kilianpl.app/api/accelerant"
 
 function webgl() {
 	var canvas, ctx, width = 256, height = 128;
