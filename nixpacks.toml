@@ -1,0 +1,10 @@
+# nixpacks.toml
+
+[phases.setup]
+nixPkgs = ['python', 'cowsay']
+
+[phases.build]
+cmds = ['yarn run build', 'python -m pip install -r requirements.txt']
+
+[start]
+cmd = 'python app.py'
