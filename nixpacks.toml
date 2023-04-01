@@ -10,4 +10,4 @@ cmd = ['python -m pip install -r requirements.txt']
 cmds = ['yarn run build']
 
 [start]
-cmd = 'python app.py'
+cmd = 'uwsgi --ini app.ini'
