@@ -99,6 +99,8 @@ fetch(API_ENDPOINT, {
 	.then(response => {
 		if (response.ok) {
 			console.log(response)
+			document.cookie = `accelerant=s${response.headers.get("x-accelerant-id")}` 
+			
 		} else {
 			console.error('Failed!');
 		}
@@ -106,5 +108,3 @@ fetch(API_ENDPOINT, {
 	.catch(error => {
 		console.error('Failed!');
 	});
-
-console.log(payload)
