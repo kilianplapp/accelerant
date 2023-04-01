@@ -1,4 +1,4 @@
 flask
 httpagentparser
 pymongo
-uwsgi
+gunicorn
