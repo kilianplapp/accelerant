@@ -2,10 +2,13 @@ const path = require('path');
 var WebpackObfuscator = require('webpack-obfuscator');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/index.mjs',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
+  },
+  experiments: {
+    topLevelAwait: true
   },
   plugins: [
     new WebpackObfuscator ({
@@ -30,7 +33,7 @@ module.exports = {
             numbersToExpressions: false,
             optionsPreset: 'default',
             renameGlobals: true,
-            renameProperties: true,
+            renameProperties: false,
             renamePropertiesMode: 'safe',
             reservedNames: [],
             reservedStrings: [],

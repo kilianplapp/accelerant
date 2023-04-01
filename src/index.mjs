@@ -1,6 +1,6 @@
 const API_ENDPOINT = "https://prod.kilianpl.app/api/accelerant"
 
-function webgl() {
+async function webgl() {
 	var canvas, ctx, width = 256, height = 128;
 	canvas = document.createElement("canvas");
 	canvas.width = width,
@@ -44,13 +44,13 @@ function webgl() {
 	}
 	catch (e) { }
 
-	var m = "";
+	//var m = "";
 
 	var n = new Uint8Array(width * height * 4);
 	ctx.readPixels(0, 0, width, height, ctx.RGBA, ctx.UNSIGNED_BYTE, n);
 	m = JSON.stringify(n).replace(/,?"[0-9]+":/g, "");
 	const ext = ctx.getExtension("WEBGL_debug_renderer_info");
-	return { "fngp": hash(m), "vrsn": ctx.getParameter(ext.UNMASKED_RENDERER_WEBGL), "vndr": ctx.getParameter(ext.UNMASKED_VENDOR_WEBGL) }
+	return { "fngp": await hash(m), "vrsn": ctx.getParameter(ext.UNMASKED_RENDERER_WEBGL), "vndr": ctx.getParameter(ext.UNMASKED_VENDOR_WEBGL) }
 }
 
 function hash(string) {
@@ -75,7 +75,7 @@ function obfuscate(str) {
 	return btoa(result);
 }
 payload = {
-	"wbgl": webgl(), // webgl information
+	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host, // hostname
 	"otrh": window.outerHeight, // outerheight
 	"otrw": window.outerWidth, // outerwidth
