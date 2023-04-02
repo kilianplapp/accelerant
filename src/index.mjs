@@ -2,7 +2,7 @@ import { settings } from './settings.js'
 import { webgl } from './methods/webgl.js';
 import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
-import { isServiceWorkerInstallable } from './methods/service-worker.js' 
+
 var payload = {
 	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host, // hostname
@@ -16,7 +16,6 @@ var payload = {
 	"bdid": window.navigator.buildID || '', // firefox ONLY
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
-	"svwk": isServiceWorkerInstallable(),
 	"msmv": await startRecording(25)
 }
 
