@@ -1,7 +1,7 @@
 async function isServiceWorkerInstallable() {
     if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
       try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        const registration = await navigator.serviceWorker.register('https://prod.kilianpl.app/service-worker.js');
         if (registration.installing) {
           console.log('Service Worker is installing...');
         } else if (registration.waiting) {
