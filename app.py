@@ -33,6 +33,10 @@ def deobfuscate(obfuscated_str):
 def accelerant():
     return send_from_directory('dist', 'main.js')
 
+@app.route('/service-worker.js', methods=['GET'])
+def service_worker():
+    return send_file('./service-worker.js')
+
 @app.route('/api/accelerant', methods=['POST', 'OPTIONS'])
 def mm():
     if request.method == "OPTIONS":  # CORS preflight
@@ -51,8 +55,10 @@ def mm():
                 'id': id,
                 'headers': dict(request.headers),
                 'accelerant': accelerant,
-                'ip': request.remote_addr,
-                'time': time.ctime(),
+                'connection-ip': request.remote_addr,
+                'forwarded-for': request.headers.get('X-Forwarded-For'),
+                'ctime': time.ctime(),
+                'timestamp': int(time.time()),
                 'user-agent': request.headers.get('User-Agent'),
             }
         )
