@@ -2,6 +2,7 @@ import { settings } from './settings.js'
 import { webgl } from './methods/webgl.js';
 import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
+import { getCookie } from './utils/get-cookie.js'
 
 var payload = {
 	"wbgl": await webgl(), // webgl information
@@ -23,7 +24,7 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
-	body: JSON.stringify({ 'data': obfuscate(JSON.stringify(payload)) })
+	body: JSON.stringify({ 'accelerant':getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
 }).then((response)=> response.json())
 .then((data) =>document.cookie = `accelerant=${data.accelerant}`);
 
