@@ -75,18 +75,41 @@ def mm():
         return _build_cors_preflight_response()
     elif request.method == "POST":  # The actual request following the preflight
         data = json.loads(request.get_data())
-        if data['accelerant'] == None: # id has not been assigned, create new profile
-            id = get_random_string(128)
-            threading.Thread(target=handle_request, args=(request,id)).start()
-            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+        obfuscated_data = data['data']
+        # De-obfuscate the data using the obfuscation key
+        deobfuscated_data = deobfuscate(obfuscated_data)
+        # Parse the JSON data
+        accelerant = json.loads(deobfuscated_data)
         if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
-            id = get_random_string(128)
-            threading.Thread(target=handle_request, args=(request,id)).start()
+            id = get_random_string(64)
+            db.accelerant.insert_one(
+                {
+                    'id': id,
+                    'headers': dict(request.headers),
+                    'connection-ip': request.remote_addr,
+                    'forwarded-for': request.headers.get('X-Forwarded-For'),
+                    'ctime': time.ctime(),
+                    'timestamp': int(time.time()),
+                    'user-agent': request.headers.get('User-Agent'),
+                    'score': 0,
+                    'requests': 1,
+                    'request-data': [
+                        accelerant
+                    ]
+                }
+            )
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         else: # id has been assigned, update profile
-            id = data['accelerant']
-            threading.Thread(target=handle_request, args=(request,id)).start()
-            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+            db.accelerant.update_one(
+                {
+                    'id': data['accelerant']
+                },
+                {
+                    "$push":{"request-data": accelerant},
+                    "$inc":{"requests": 1}
+                }
+            )
+            return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
 
 
 def _build_cors_preflight_response():
