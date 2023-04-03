@@ -26,44 +26,21 @@ def deobfuscate(obfuscated_str):
         result += chr(key_int ^ ord(decoded_str[i]))
     return result
 
-def handle_request(request, id):
-    try:
-        obfuscated_data = request.get_data()['data']
-        # De-obfuscate the data using the obfuscation key
-        deobfuscated_data = deobfuscate(obfuscated_data)
-        # Parse the JSON data
-        accelerant = json.loads(deobfuscated_data)
-        if db.accelerant.count_documents({'id': id}) == 0: # id has not been assigned, create new profile
-            db.accelerant.insert_one(
-                {
-                    'id': id,
-                    'headers': dict(request.headers),
-                    'connection-ip': request.remote_addr,
-                    'forwarded-for': request.headers.get('X-Forwarded-For'),
-                    'ctime': time.ctime(),
-                    'timestamp': int(time.time()),
-                    'user-agent': request.headers.get('User-Agent'),
-                    'score': 0,
-                    'requests': 1,
-                    'request-data': [
-                        accelerant
-                    ]
-                }
-            )
-            return id
-        else: # id has been assigned, update profile
-            db.accelerant.update_one(
-                {
-                    'id': id
-                },
-                {
-                    "$push":{"request-data": accelerant},
-                    "$inc":{"requests": 1}
-                }
-            )
-            return id
-    except Exception as e:
-        print(e)
+def _build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+
+
+def _corsify_actual_response(response,id):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Server'] = 'Accelerant'
+    response.headers['X-Powered-By'] = 'Accelerant'
+    response.headers['X-Accelerant-Id'] = id
+    return response
 
 @app.route('/accelerant.js', methods=['GET'])
 def accelerant():
@@ -91,7 +68,7 @@ def mm():
                     'connection-ip': request.remote_addr,
                     'forwarded-for': request.headers.get('X-Forwarded-For'),
                     'ctime': time.ctime(),
-                    'timestamp': int(time.time()),
+                    'timestamp': int(time.time() * 1000),
                     'user-agent': request.headers.get('User-Agent'),
                     'score': 0,
                     'requests': 1,
@@ -103,7 +80,7 @@ def mm():
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         else: # id has been assigned, update profile
             accelerant['ctime'] = time.ctime()
-            accelerant['timestamp'] = int(time.time())
+            accelerant['timestamp'] = int(time.time()* 1000)
             db.accelerant.update_one(
                 {
                     'id': data['accelerant']
@@ -115,19 +92,21 @@ def mm():
             )
             return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
 
-
-def _build_cors_preflight_response():
-    response = make_response()
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add('Access-Control-Allow-Headers', "*")
-    response.headers.add('Access-Control-Allow-Methods', "*")
-    return response
-
-
-def _corsify_actual_response(response,id):
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Server'] = 'Accelerant'
-    response.headers['X-Powered-By'] = 'Accelerant'
-    response.headers['X-Accelerant-Id'] = id
-    return response
+@app.route('/api/accelerant/<id>', methods=['GET'])
+def get_accelerant(id):
+    # calculate score
+    profile = db.accelerant.find_one({'id': id})
+    # get average time between requests
+    t = 0
+    for request in profile['request-data']:
+        t += request['timestamp'] - profile['timestamp']
+    t = t / len(profile['request-data'])
+    if t > 2500:
+        score = 75
+    elif t > 2000:
+        score = 50
+    elif t > 1500:
+        score = 25
+    else:
+        score = 50
+    return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
