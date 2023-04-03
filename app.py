@@ -34,7 +34,7 @@ def handle_request(data, id):
     accelerant = json.loads(deobfuscated_data)
     if db.accelerant.count_documents({'id': id}) == 0: # id has not been assigned, create new profile
         id = get_random_string(128)
-        db.Accelerant.insert_one(
+        db.accelerant.insert_one(
             {
                 'id': id,
                 'headers': dict(request.headers),
