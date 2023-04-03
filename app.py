@@ -71,6 +71,7 @@ def mm():
                     'timestamp': int(time.time() * 1000),
                     'user-agent': request.headers.get('User-Agent'),
                     'requests': 1,
+                    'pixel': False,
                     'request-data': [
                         accelerant
                     ]
@@ -97,6 +98,7 @@ def get_accelerant(id):
         # calculate score
         profile = db.accelerant.find_one({'id': id})
         # get average time between requests
+        score = 0
         t = 0
         for request in profile['request-data']:
             t += request['timestamp'] - profile['timestamp']
@@ -113,4 +115,4 @@ def get_accelerant(id):
         if score > 100: score = 100
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        return jsonify({"success": False})
