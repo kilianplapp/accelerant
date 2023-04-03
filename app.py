@@ -110,7 +110,7 @@ def get_accelerant(id):
             score += 50
         elif t > 1000:
             score += 25
-            
+        if score > 100: score = 100
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
-        return jsonify({"success": False})
+        return jsonify({"success": False, "error": str(e)})
