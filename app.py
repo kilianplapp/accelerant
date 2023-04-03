@@ -27,40 +27,43 @@ def deobfuscate(obfuscated_str):
     return result
 
 def handle_request(request, id):
-    obfuscated_data = request.get_data()['data']
-    # De-obfuscate the data using the obfuscation key
-    deobfuscated_data = deobfuscate(obfuscated_data)
-    # Parse the JSON data
-    accelerant = json.loads(deobfuscated_data)
-    if db.accelerant.count_documents({'id': id}) == 0: # id has not been assigned, create new profile
-        db.accelerant.insert_one(
-            {
-                'id': id,
-                'headers': dict(request.headers),
-                'connection-ip': request.remote_addr,
-                'forwarded-for': request.headers.get('X-Forwarded-For'),
-                'ctime': time.ctime(),
-                'timestamp': int(time.time()),
-                'user-agent': request.headers.get('User-Agent'),
-                'score': 0,
-                'requests': 1,
-                'request-data': [
-                    accelerant
-                ]
-            }
-        )
-        return id
-    else: # id has been assigned, update profile
-        db.accelerant.update_one(
-            {
-                'id': id
-            },
-            {
-                "$push":{"request-data": accelerant},
-                "$inc":{"requests": 1}
-            }
-        )
-        return id
+    try:
+        obfuscated_data = request.get_data()['data']
+        # De-obfuscate the data using the obfuscation key
+        deobfuscated_data = deobfuscate(obfuscated_data)
+        # Parse the JSON data
+        accelerant = json.loads(deobfuscated_data)
+        if db.accelerant.count_documents({'id': id}) == 0: # id has not been assigned, create new profile
+            db.accelerant.insert_one(
+                {
+                    'id': id,
+                    'headers': dict(request.headers),
+                    'connection-ip': request.remote_addr,
+                    'forwarded-for': request.headers.get('X-Forwarded-For'),
+                    'ctime': time.ctime(),
+                    'timestamp': int(time.time()),
+                    'user-agent': request.headers.get('User-Agent'),
+                    'score': 0,
+                    'requests': 1,
+                    'request-data': [
+                        accelerant
+                    ]
+                }
+            )
+            return id
+        else: # id has been assigned, update profile
+            db.accelerant.update_one(
+                {
+                    'id': id
+                },
+                {
+                    "$push":{"request-data": accelerant},
+                    "$inc":{"requests": 1}
+                }
+            )
+            return id
+    except Exception as e:
+        print(e)
 
 @app.route('/accelerant.js', methods=['GET'])
 def accelerant():
