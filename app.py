@@ -40,7 +40,7 @@ def mm():
         deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
-        if accelerant['accelerant'] == None: # id has not been assigned, create new profile
+        if data['accelerant'] == None: # id has not been assigned, create new profile
             id = get_random_string(128)
             db.Accelerant.insert_one(
                 {
