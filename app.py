@@ -1,13 +1,9 @@
 # COPYRIGHT 2023 Kilian Plapp -  https://kilianpl.app/
 import base64
-import io
-import httpagentparser
-import threading
 import time
 import json
 from pymongo import MongoClient
 from flask import Flask, send_file, make_response, request, render_template, jsonify, send_from_directory
-from collections import Counter
 import random
 import string
 app = Flask(__name__)
