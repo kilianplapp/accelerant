@@ -82,6 +82,8 @@ def mm():
         accelerant = json.loads(deobfuscated_data)
         if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
             id = get_random_string(64)
+            accelerant['ctime'] = time.ctime()
+            accelerant['timestamp'] = int(time.time())
             db.accelerant.insert_one(
                 {
                     'id': id,
@@ -100,6 +102,8 @@ def mm():
             )
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         else: # id has been assigned, update profile
+            accelerant['ctime'] = time.ctime()
+            accelerant['timestamp'] = int(time.time())
             db.accelerant.update_one(
                 {
                     'id': data['accelerant']
