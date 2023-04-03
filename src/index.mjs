@@ -3,7 +3,7 @@ import { webgl } from './methods/webgl.js';
 import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
-
+import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 var payload = {
 	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host, // hostname
@@ -17,7 +17,8 @@ var payload = {
 	"bdid": window.navigator.buildID || '', // firefox ONLY
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
-	"msmv": await startRecording(25)
+	"afmt": detectSupportedAudioFormats(), // audio formats
+	"msmv": await startRecording(25) // mouse movements
 }
 
 // Make a POST request to the API endpoint with the obfuscated data as the request body
