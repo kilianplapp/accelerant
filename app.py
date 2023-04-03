@@ -74,7 +74,10 @@ def mm():
         return _build_cors_preflight_response()
     elif request.method == "POST":  # The actual request following the preflight
         data = json.loads(request.get_data())
-
+        if data['accelerant'] == None: # id has not been assigned, create new profile
+            id = get_random_string(128)
+            threading.Thread(target=handle_request, args=(data,id)).start()
+            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
             id = get_random_string(128)
             threading.Thread(target=handle_request, args=(data,id)).start()
