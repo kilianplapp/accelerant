@@ -57,8 +57,7 @@ def mm():
         deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
-        complete = False
-        while complete == False:
+        while True:
             if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
                 id = get_random_string(64)
                 accelerant['ctime'] = time.ctime()
@@ -81,9 +80,9 @@ def mm():
                 )
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
             else: # id has been assigned, update profile
-                profile = db.accelerant.find_one({'id': id})
+                profile = db.accelerant.find_one({'id': data['accelerant']})
                 if profile['request-data'][-1]['timestamp'] > int(time.time()) - 900: # if last request was less than 15 minutes ago, delete profile
-                    db.accelerant.delete_one({'id': id})
+                    db.accelerant.delete_one({'id': data['accelerant']})
                     continue
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)
