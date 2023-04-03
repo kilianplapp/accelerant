@@ -34,7 +34,7 @@ def mm():
     if request.method == "OPTIONS":  # CORS preflight
         return _build_cors_preflight_response()
     elif request.method == "POST":  # The actual request following the preflight
-        data = json.lods(request.get_data())
+        data = json.loads(request.get_data())
         obfuscated_data = data['data']
         # De-obfuscate the data using the obfuscation key
         deobfuscated_data = deobfuscate(obfuscated_data)
