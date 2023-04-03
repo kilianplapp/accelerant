@@ -2,3 +2,4 @@ flask
 httpagentparser
 pymongo
 gunicorn
+sentry-sdk[flask]

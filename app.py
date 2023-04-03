@@ -7,6 +7,21 @@ from pymongo import MongoClient
 from flask import Flask, send_file, make_response, request, render_template, jsonify, send_from_directory
 import random
 import string
+from sentry_sdk.integrations.flask import FlaskIntegration
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn="https://20998e7297a14def82eba60f9a234352@o4504805411389440.ingest.sentry.io/4504952506941440",
+    integrations=[
+        FlaskIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
+
 app = Flask(__name__)
 client = MongoClient(
     "mongodb+srv://kilianplapp:ubCpJxtuW4XzaDX8@sdt-0.bbusij8.mongodb.net/?retryWrites=true&w=majority")
