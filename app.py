@@ -76,7 +76,7 @@ def mm():
             if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
                 id = get_random_string(64)
                 accelerant['ctime'] = time.ctime()
-                accelerant['timestamp'] = int(time.time())
+                accelerant['timestamp'] = int(time.time()* 1000)
                 db.accelerant.insert_one(
                     {
                         'id': id,
@@ -96,7 +96,7 @@ def mm():
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
-                if profile['request-data'][-1]['timestamp'] < int(time.time()) - 900: # if last request was less than 15 minutes ago, delete profile
+                if profile['request-data'][-1]['timestamp'] < int(time.time()) - 900000: # if last request was less than 15 minutes ago, delete profile
                     db.accelerant.delete_one({'id': data['accelerant']})
                     continue
                 accelerant['ctime'] = time.ctime()
@@ -132,11 +132,11 @@ def get_accelerant(id):
                 if request[data] == False:
                     score -= 15
         t = t / profile['requests']
-        if t > 10000:
+        if t > 10000000:
             score += 75
-        elif t > 5000:
+        elif t > 5000000:
             score += 50
-        elif t > 1000:
+        elif t > 1000000:
             score += 25
         if profile['requests'] == 1:
             score += 50
