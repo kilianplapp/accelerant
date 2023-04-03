@@ -4,7 +4,7 @@ yarn-error.log
 __pycache__/
 *.py[cod]
 *$py.class
-
+accelerant.json
 # C extensions
 *.so
 

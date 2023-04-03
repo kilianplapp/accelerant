@@ -7,6 +7,7 @@ import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 var payload = {
 	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host, // hostname
+	"page": window.location.pathname, // page
 	"otrh": window.outerHeight, // outerheight
 	"otrw": window.outerWidth, // outerwidth
 	"lang": navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || '', // en-US

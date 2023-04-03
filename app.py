@@ -34,27 +34,43 @@ def mm():
     if request.method == "OPTIONS":  # CORS preflight
         return _build_cors_preflight_response()
     elif request.method == "POST":  # The actual request following the preflight
-        obfuscated_data = json.loads(request.get_data())['data']
-
+        data = json.lods(request.get_data())
+        obfuscated_data = data['data']
         # De-obfuscate the data using the obfuscation key
         deobfuscated_data = deobfuscate(obfuscated_data)
-
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
-        id = get_random_string(128)
-        db.Accelerant.insert_one(
-            {
-                'id': id,
-                'headers': dict(request.headers),
-                'accelerant': accelerant,
-                'connection-ip': request.remote_addr,
-                'forwarded-for': request.headers.get('X-Forwarded-For'),
-                'ctime': time.ctime(),
-                'timestamp': int(time.time()),
-                'user-agent': request.headers.get('User-Agent'),
-            }
-        )
-        return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+        if accelerant['accelerant'] == None: # id has not been assigned, create new profile
+            id = get_random_string(128)
+            db.Accelerant.insert_one(
+                {
+                    'id': id,
+                    'headers': dict(request.headers),
+                    'connection-ip': request.remote_addr,
+                    'forwarded-for': request.headers.get('X-Forwarded-For'),
+                    'ctime': time.ctime(),
+                    'timestamp': int(time.time()),
+                    'user-agent': request.headers.get('User-Agent'),
+                    'score': 0,
+                    'requests': 0,
+                    'request-data': [
+                        accelerant
+                    ]
+                }
+            )
+            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+        else: # id has been assigned, update profile
+            id = data['accelerant']
+            db.accelerant.update_one(
+                {
+                    'id': id
+                },
+                {
+                    "$push":{"request-data": accelerant},
+                    "$inc":{"requests": 1}
+                }
+            )
+            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
 
 
 def _build_cors_preflight_response():
