@@ -57,40 +57,46 @@ def mm():
         deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
-        if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
-            id = get_random_string(64)
-            accelerant['ctime'] = time.ctime()
-            accelerant['timestamp'] = int(time.time())
-            db.accelerant.insert_one(
-                {
-                    'id': id,
-                    'headers': dict(request.headers),
-                    'connection-ip': request.remote_addr,
-                    'forwarded-for': request.headers.get('X-Forwarded-For'),
-                    'ctime': time.ctime(),
-                    'timestamp': int(time.time() * 1000),
-                    'user-agent': request.headers.get('User-Agent'),
-                    'requests': 1,
-                    'pixel': False,
-                    'request-data': [
-                        accelerant
-                    ]
-                }
-            )
-            return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
-        else: # id has been assigned, update profile
-            accelerant['ctime'] = time.ctime()
-            accelerant['timestamp'] = int(time.time()* 1000)
-            db.accelerant.update_one(
-                {
-                    'id': data['accelerant']
-                },
-                {
-                    "$push":{"request-data": accelerant},
-                    "$inc":{"requests": 1}
-                }
-            )
-            return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
+        complete = False
+        while complete == False:
+            if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
+                id = get_random_string(64)
+                accelerant['ctime'] = time.ctime()
+                accelerant['timestamp'] = int(time.time())
+                db.accelerant.insert_one(
+                    {
+                        'id': id,
+                        'headers': dict(request.headers),
+                        'connection-ip': request.remote_addr,
+                        'forwarded-for': request.headers.get('X-Forwarded-For'),
+                        'ctime': time.ctime(),
+                        'timestamp': int(time.time() * 1000),
+                        'user-agent': request.headers.get('User-Agent'),
+                        'requests': 1,
+                        'pixel': False,
+                        'request-data': [
+                            accelerant
+                        ]
+                    }
+                )
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+            else: # id has been assigned, update profile
+                profile = db.accelerant.find_one({'id': id})
+                if profile['request-data'][-1]['timestamp'] > int(time.time()) - 900: # if last request was less than 15 minutes ago, delete profile
+                    db.accelerant.delete_one({'id': id})
+                    continue
+                accelerant['ctime'] = time.ctime()
+                accelerant['timestamp'] = int(time.time()* 1000)
+                db.accelerant.update_one(
+                    {
+                        'id': data['accelerant']
+                    },
+                    {
+                        "$push":{"request-data": accelerant},
+                        "$inc":{"requests": 1}
+                    }
+                )
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
