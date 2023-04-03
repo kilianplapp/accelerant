@@ -81,7 +81,7 @@ def mm():
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
-                if profile['request-data'][-1]['timestamp'] > int(time.time()) - 900: # if last request was less than 15 minutes ago, delete profile
+                if profile['request-data'][-1]['timestamp'] < int(time.time()) - 900: # if last request was less than 15 minutes ago, delete profile
                     db.accelerant.delete_one({'id': data['accelerant']})
                     continue
                 accelerant['ctime'] = time.ctime()
