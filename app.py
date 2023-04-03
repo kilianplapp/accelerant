@@ -129,4 +129,4 @@ def get_accelerant(id):
         if score < 0: score = 0
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
-        return jsonify({"success": False})
+        return jsonify({"success": False, 'error': str(e)})
