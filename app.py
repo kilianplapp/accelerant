@@ -2,11 +2,12 @@
 import base64
 import time
 import json
-import threading
 from pymongo import MongoClient
 from flask import Flask, send_file, make_response, request, render_template, jsonify, send_from_directory
 import random
+import traceback
 import string
+import math
 from sentry_sdk.integrations.flask import FlaskIntegration
 import sentry_sdk
 
@@ -21,6 +22,40 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
+
+def check_mm(mouse_events, speed_limit=5, acceleration_limit=5):
+    # Check for suspiciously high mouse speed
+    speed_limit_breaks = 0
+    for i in range(1, len(mouse_events)):
+        dx = mouse_events[i]['x'] - mouse_events[i-1]['x']
+        dy = mouse_events[i]['y'] - mouse_events[i-1]['y']
+        dt = mouse_events[i]['timestamp'] - mouse_events[i-1]['timestamp']
+        distance = math.sqrt(dx**2 + dy**2)
+        speed = distance / dt
+        print("Speed: " + str(speed))
+        if speed > speed_limit:
+            speed_limit_breaks += 1
+        
+    acceleration_limit_breaks = 0
+    for i in range(2, len(mouse_events)):
+        dx1 = mouse_events[i-1]['x'] - mouse_events[i-2]['x']
+        dy1 = mouse_events[i-1]['y'] - mouse_events[i-2]['y']
+        dt1 = mouse_events[i-1]['timestamp'] - mouse_events[i-2]['timestamp']
+        distance1 = math.sqrt(dx1**2 + dy1**2)
+        speed1 = distance1 / dt1
+        
+        dx2 = mouse_events[i]['x'] - mouse_events[i-1]['x']
+        dy2 = mouse_events[i]['y'] - mouse_events[i-1]['y']
+        dt2 = mouse_events[i]['timestamp'] - mouse_events[i-1]['timestamp']
+        distance2 = math.sqrt(dx2**2 + dy2**2)
+        speed2 = distance2 / dt2
+        
+        acceleration = (speed2 - speed1) / dt2
+        acceleration = abs(acceleration)
+        print("Acceleration: " + str(acceleration))
+        if acceleration > acceleration_limit:
+            acceleration_limit_breaks += 1
+    return [speed_limit_breaks, acceleration_limit_breaks]
 
 app = Flask(__name__)
 client = MongoClient(
@@ -96,7 +131,7 @@ def mm():
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
-                if profile['request-data'][-1]['timestamp'] < int(time.time()) - 900000: # if last request was less than 15 minutes ago, delete profile
+                if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
                     db.accelerant.delete_one({'id': data['accelerant']})
                     continue
                 accelerant['ctime'] = time.ctime()
@@ -128,15 +163,19 @@ def get_accelerant(id):
             if request['uagt'] != profile['user-agent']:
                 return jsonify({"score": 0, "success": True, "code":"001", "user-agent": profile['user-agent']})
             for data in request:
-                if data in ['wbdrv', 'bdid']: continue
+                if data in ['wdrv', 'bdid']: continue
+                if request[data] == 0: continue
                 if request[data] == False:
                     score -= 15
+            mm_sus = check_mm(request['msmv'])
+            score -= mm_sus[0] * 5
+            score -= mm_sus[1] * 5
         t = t / profile['requests']
-        if t > 10000000:
+        if t > 12000:
             score += 75
-        elif t > 5000000:
+        elif t > 30000:
             score += 50
-        elif t > 1000000:
+        elif t > 10000:
             score += 25
         if profile['requests'] == 1:
             score += 50
@@ -144,4 +183,5 @@ def get_accelerant(id):
         if score < 0: score = 0
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
-        return jsonify({"success": False, 'error': str(e)})
+        traceback.print_exc(e)
+        return jsonify({"success": False})
