@@ -113,17 +113,17 @@ def get_accelerant(id):
             if request['uagt'] != profile['user-agent']:
                 return jsonify({"score": 0, "success": True, "code":"001", "user-agent": profile['user-agent']})
             for data in request:
-                if data is ['wbdrv', 'bdid']: continue
+                if data in ['wbdrv', 'bdid']: continue
                 if request[data] == False:
                     score -= 15
-        t = t / len(profile['request-data'])
+        t = t / profile['requests']
         if t > 10000:
             score += 75
         elif t > 5000:
             score += 50
         elif t > 1000:
             score += 25
-        if len(profile['request-data']) == 1:
+        if profile['requests'] == 1:
             score += 50
         if score > 100: score = 100
         if score < 0: score = 0
