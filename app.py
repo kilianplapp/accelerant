@@ -26,14 +26,13 @@ def deobfuscate(obfuscated_str):
         result += chr(key_int ^ ord(decoded_str[i]))
     return result
 
-def handle_request(data, id):
-    obfuscated_data = data['data']
+def handle_request(request, id):
+    obfuscated_data = request.get_data()['data']
     # De-obfuscate the data using the obfuscation key
     deobfuscated_data = deobfuscate(obfuscated_data)
     # Parse the JSON data
     accelerant = json.loads(deobfuscated_data)
     if db.accelerant.count_documents({'id': id}) == 0: # id has not been assigned, create new profile
-        id = get_random_string(128)
         db.accelerant.insert_one(
             {
                 'id': id,
@@ -52,7 +51,6 @@ def handle_request(data, id):
         )
         return id
     else: # id has been assigned, update profile
-        id = data['accelerant']
         db.accelerant.update_one(
             {
                 'id': id
@@ -76,15 +74,15 @@ def mm():
         data = json.loads(request.get_data())
         if data['accelerant'] == None: # id has not been assigned, create new profile
             id = get_random_string(128)
-            threading.Thread(target=handle_request, args=(data,id)).start()
+            threading.Thread(target=handle_request, args=(request,id)).start()
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
             id = get_random_string(128)
-            threading.Thread(target=handle_request, args=(data,id)).start()
+            threading.Thread(target=handle_request, args=(request,id)).start()
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
         else: # id has been assigned, update profile
             id = data['accelerant']
-            threading.Thread(target=handle_request, args=(data,id)).start()
+            threading.Thread(target=handle_request, args=(request,id)).start()
             return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
 
 
