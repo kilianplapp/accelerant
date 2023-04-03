@@ -109,9 +109,9 @@ def get_accelerant(id):
             t += request['timestamp'] - profile['timestamp']
             if request['vvpt'] > 0: score += 5
             if request['wdrv'] == True:
-                return jsonify({"score": 0, "success": True, "user-agent": profile['user-agent']})
+                return jsonify({"score": 0, "success": True, "code":"002", "user-agent": profile['user-agent']})
             if request['uagt'] != profile['user-agent']:
-                return jsonify({"score": 0, "success": True, "user-agent": profile['user-agent']})
+                return jsonify({"score": 0, "success": True, "code":"001", "user-agent": profile['user-agent']})
             for data in request:
                 if data is ['wbdrv', 'bdid']: continue
                 if request[data] == False:
