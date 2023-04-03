@@ -70,7 +70,6 @@ def mm():
                     'ctime': time.ctime(),
                     'timestamp': int(time.time() * 1000),
                     'user-agent': request.headers.get('User-Agent'),
-                    'score': 0,
                     'requests': 1,
                     'request-data': [
                         accelerant
@@ -94,19 +93,24 @@ def mm():
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
-    # calculate score
-    profile = db.accelerant.find_one({'id': id})
-    # get average time between requests
-    t = 0
-    for request in profile['request-data']:
-        t += request['timestamp'] - profile['timestamp']
-    t = t / len(profile['request-data'])
-    if t > 2500:
-        score = 75
-    elif t > 2000:
-        score = 50
-    elif t > 1500:
-        score = 25
-    else:
-        score = 50
-    return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
+    try:
+        # calculate score
+        profile = db.accelerant.find_one({'id': id})
+        # get average time between requests
+        t = 0
+        for request in profile['request-data']:
+            t += request['timestamp'] - profile['timestamp']
+            if request['vvpt'] > 0: score += 5
+            if request['wdrv'] == True:
+                return jsonify({"score": 0, "success": True, "user-agent": profile['user-agent']})
+        t = t / len(profile['request-data'])
+        if t > 10000:
+            score += 75
+        elif t > 5000:
+            score += 50
+        elif t > 1000:
+            score += 25
+            
+        return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
+    except Exception as e:
+        return jsonify({"success": False})

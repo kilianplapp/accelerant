@@ -6,16 +6,16 @@ import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 var payload = {
 	"wbgl": await webgl(), // webgl information
-	"htnm": window.location.host, // hostname
-	"page": window.location.pathname, // page
-	"otrh": window.outerHeight, // outerheight
-	"otrw": window.outerWidth, // outerwidth
-	"lang": navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || '', // en-US
+	"htnm": window.location.host || false, // hostname
+	"page": window.location.pathname || false, // page
+	"otrh": window.outerHeight || false, // outerheight
+	"otrw": window.outerWidth || false, // outerwidth
+	"lang": navigator.language || navigator.userLanguage || navigator.browserLanguage || navigator.systemLanguage || false, // en-US
 	"dpxr": window.devicePixelRatio || 1, // device pixel ratio
-	"uagt": window.navigator.userAgent || '', // ua
-	"wdrv": window.navigator.webdriver || '', // always be false
-	"lngs": window.navigator.languages || [],
-	"bdid": window.navigator.buildID || '', // firefox ONLY
+	"uagt": window.navigator.userAgent || false, // ua
+	"wdrv": window.navigator.webdriver || false, // always be false
+	"lngs": window.navigator.languages || false,
+	"bdid": window.navigator.buildID || false, // firefox ONLY
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
 	"afmt": detectSupportedAudioFormats(), // audio formats
