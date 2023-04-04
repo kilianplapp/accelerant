@@ -43,7 +43,6 @@ fetch(settings.API_ENDPOINT, {
 			document.body.appendChild(star)
 		}
 		if (data.pow == false){
-			begin = Date.now();
 			worker.postMessage({ data: data.pow_challenge, difficulty: data.difficulty });
 			worker.onmessage = (event) => {
 				end = Date.now();
@@ -52,7 +51,7 @@ fetch(settings.API_ENDPOINT, {
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'text/plain' },
-						body: JSON.stringify({ 'hash': event.data.hash, 'data': event.data.data, 'nonce':event.data.nonce, 'difficulty': event.data.difficulty, 'time': end - begin })
+						body: JSON.stringify({ 'hash': event.data.hash, 'data': event.data.data, 'nonce':event.data.nonce, 'difficulty': event.data.difficulty, 'time': end - event.data.begin })
 					}
 				)
 			};

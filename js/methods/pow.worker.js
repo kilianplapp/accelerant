@@ -11,6 +11,7 @@ function sha512(text) {
 }
 
 addEventListener('message', async (event) => {
+  begin = Date.now();
   let data = event.data.data;
   let difficulty = event.data.difficulty;
 
@@ -24,6 +25,7 @@ addEventListener('message', async (event) => {
     hash,
     nonce, // add nonce to result
     data,
-    difficulty
+    difficulty,
+    begin
   });
 });
