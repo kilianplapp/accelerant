@@ -9,6 +9,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 import sentry_sdk
 import io
 import base64
+import ipaddress
 
 from pymongo import MongoClient
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
@@ -40,6 +41,10 @@ db = client.starl1ght
 #initialize util functions
 def get_random_string(length):
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
+
+# initialize ip ban list
+with open('./backend/ip_list.json') as f:
+    ip_list = json.load(f)
 
 def _build_cors_preflight_response():
     response = make_response()
@@ -142,7 +147,7 @@ def get_accelerant(id):
             score -= mm_sus[1] * 5
         # calculate average time between requests
         t = t / profile['requests']
-        if t > 12000:
+        if t > 120000:
             score += 75
         elif t > 30000:
             score += 50
@@ -160,6 +165,13 @@ def get_accelerant(id):
         if score > 100: score = 100
         # if the score is less than 0, set it to 0
         if score < 0: score = 0
+
+        #check ip address
+        for ip_range in ip_list['ips']:
+            if profile['X-Forwarded-For'] in ipaddress.IPv4Network(ip_range):
+                score = 0
+                break
+        
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
         traceback.print_exc(e)
