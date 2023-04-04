@@ -1,13 +1,11 @@
-function sha512(text) {
-  return new Promise((resolve, reject) => {
-    let buffer = (new TextEncoder).encode(text);
-
-    crypto.subtle.digest('SHA-512', buffer.buffer).then(result => {
-      resolve(Array.from(new Uint8Array(result)).map(
-        c => c.toString(16).padStart(2, '0')
-      ).join(''));
-    }, reject);
-  });
+async function sha512(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hash = await crypto.subtle.digest("SHA-512", data);
+  const hex = Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+  return hex;
 }
 
 addEventListener('message', async (event) => {
@@ -18,7 +16,7 @@ addEventListener('message', async (event) => {
   let hash;
   let nonce = 0;
   do {
-    hash = await sha512(data + nonce);
+    hash = await sha512(data + nonce++);
   } while(hash.substr(0, difficulty) !== Array(difficulty + 1).join('0'));
 
   postMessage({ 
