@@ -8,7 +8,7 @@ export async function canvas() {
     canvas.style.background = "white";
 
     // insert it into the dom
-    document.append(canvas);
+    document.body.appendChild(canvas);
 
     // get the 2d context and apply the text
     const context = canvas.getContext("2d");
