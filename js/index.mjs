@@ -34,11 +34,8 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
-	cors: 'no-cors',
-	mode: 'no-cors',
 	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
-}).then((response) => response.json())
-	.then((data) => {
+}).then((response) => response.json()).then((data) => {
 		document.cookie = `accelerant=${data.accelerant}`
 		if (data.star == false){
 			var star = document.createElement("img")
