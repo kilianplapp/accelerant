@@ -71,15 +71,9 @@ def _corsify_actual_response(response,id):
 
 # initialize routes
 
-@app.route('/accelerant.js', methods=['GET'])
-@cross_origin()
-def accelerant():
-    return send_from_directory('dist', 'main.js')
-
-@app.route('/750.main.js', methods=['GET'])
-@cross_origin()
-def main():
-    return send_from_directory('dist', '750.main.js')
+@app.route('/js/<path:path>')
+def send_report(path):
+    return send_from_directory('dist', path)
 
 @app.route('/api/accelerant', methods=['POST', 'OPTIONS'])
 @cross_origin()

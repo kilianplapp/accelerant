@@ -5,7 +5,11 @@ import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 import { canvas } from './methods/canvas.js';
-const worker = new Worker(new URL('./methods/worker.js', import.meta.url));
+//import Worker from "./methods/pow.worker.js";
+import { CorsWorker as Worker } from './utils/cors-worker.js';
+const corswrk = new Worker(new URL('./methods/pow.worker.js', import.meta.url));
+const worker = corswrk.getWorker();
+//const worker = new Worker();
 
 var payload = {
 	"wbgl": await webgl(), // webgl information
