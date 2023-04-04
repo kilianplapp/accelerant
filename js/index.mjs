@@ -4,6 +4,11 @@ import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
+const FingerprintJS = require('@fingerprintjs/fingerprintjs')
+
+// Initialize the agent at application startup.
+const fpPromise = FingerprintJS.load()
+
 var payload = {
 	"wbgl": await webgl(), // webgl information
 	"htnm": window.location.host || false, // hostname
@@ -19,6 +24,7 @@ var payload = {
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
 	"afmt": detectSupportedAudioFormats(), // audio formats
+	"fpjs": await fpPromise.then(fp => fp.get()), // fingerprintjs
 	"msmv": await startRecording(25) // mouse movements
 }
 
