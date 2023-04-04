@@ -72,7 +72,8 @@ def _corsify_actual_response(response,id):
 
 @app.route('/js/<path:path>')
 def send_report(path):
-    return _corsify_actual_response(send_from_directory('dist', path))
+    r = make_response(send_from_directory('dist/js', path))
+    return _corsify_actual_response(r, 0)
 
 @app.route('/api/accelerant', methods=['POST', 'OPTIONS'])
 def mm():
