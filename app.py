@@ -14,7 +14,8 @@ import re
 
 from pymongo import MongoClient
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
-from flask_cors import CORS
+from flask_cors import cross_origin
+
 #import backend
 from backend.check_mm import check_mm
 from backend.deobfuscate import deobfuscate
@@ -36,7 +37,6 @@ sentry_sdk.init(
 
 # initialize flask
 app = Flask(__name__)
-CORS(app)
 
 # initialize mongodb
 client = MongoClient("mongodb+srv://kilianplapp:ubCpJxtuW4XzaDX8@sdt-0.bbusij8.mongodb.net/?retryWrites=true&w=majority")
@@ -70,15 +70,19 @@ def _corsify_actual_response(response,id):
     return response
 
 # initialize routes
+
 @app.route('/accelerant.js', methods=['GET'])
+@cross_origin()
 def accelerant():
     return send_from_directory('dist', 'main.js')
 
 @app.route('/750.main.js', methods=['GET'])
+@cross_origin()
 def main():
     return send_from_directory('dist', '750.main.js')
 
 @app.route('/api/accelerant', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def mm():
     if request.method == "OPTIONS":  # CORS preflight
         return _build_cors_preflight_response()
@@ -130,6 +134,7 @@ def mm():
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
+@cross_origin()
 def get_accelerant(id):
     try:
         profile = db.accelerant.find_one({'id': id})
@@ -198,6 +203,7 @@ def get_accelerant(id):
         return jsonify({"success": False})
 
 @app.route('/api/accelerant/<id>/star', methods=['GET'])
+@cross_origin()
 def star(id):
     r = make_response(send_file(io.BytesIO(base64.b64decode("R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==")), mimetype="image/gif"))
     r.headers['Cache-Control'] = 'no-cache'

@@ -9,4 +9,4 @@ COPY ./ /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 ENV PYTHONPATH /usr/local/lib/python3.7/site-packages:/usr/lib/python3.6/site-packages
-CMD ["python", "-m", "gunicorn", "--workers", "15", "--bind", "0.0.0.0:80", "app:app"]
+CMD ["python", "-m", "gunicorn", "--workers", "10", "--bind", "0.0.0.0:80", "app:app"]
