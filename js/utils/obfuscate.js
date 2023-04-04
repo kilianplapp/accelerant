@@ -2,9 +2,12 @@ export async function encrypt(message, key) {
 	const encoder = new TextEncoder();
 	const data = encoder.encode(message);
   
+	// Convert the key to an ArrayBuffer
+	const keyArrayBuffer = encoder.encode(key).buffer;
+  
 	const cryptoKey = await window.crypto.subtle.importKey(
 	  "raw",
-	  key,
+	  keyArrayBuffer,
 	  "AES-CBC",
 	  false,
 	  ["encrypt"]
@@ -30,6 +33,7 @@ export async function encrypt(message, key) {
   
 	return btoa(String.fromCharCode.apply(null, combined));
   }
+  
 
 // export function obfuscate(str) {
 //     const key = settings.KEY
