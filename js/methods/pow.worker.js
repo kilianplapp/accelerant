@@ -18,7 +18,7 @@ addEventListener('message', async (event) => {
   let hash;
   let nonce = 0;
   do {
-    hash = await sha512(data + nonce++);
+    hash = await sha512(data + nonce);
   } while(hash.substr(0, difficulty) !== Array(difficulty + 1).join('0'));
 
   postMessage({ 

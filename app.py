@@ -214,7 +214,12 @@ def pow(id):
     data = json.loads(request.get_data())
     profile = db.accelerant.find_one({'id': id})
     data_str = f"{profile['pow-challenge']}{data['nonce']}"
-    valid_hash = hashlib.sha256(data_str.encode()).hexdigest() == data['hash']
+    valid_hash = hashlib.sha512(data_str.encode()).hexdigest() == data['hash']
+    x = profile['pow-challenge'].encode('utf-8') + int(data['nonce']).to_bytes((data['nonce'].bit_length() + 7) // 8, 'big')
+    hash_value = hashlib.sha512(x).hexdigest()
+    print(hashlib.sha512(data_str.encode()).hexdigest())
+    print(data['hash'])
+    print(hash_value)
     if valid_hash:
         # update pow status
         db.accelerant.update_one({'id': id}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
