@@ -108,7 +108,7 @@ def mm():
                         ]
                     }
                 )
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":id}), id)
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":id, "star":False}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
                 if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
@@ -125,7 +125,7 @@ def mm():
                         "$inc":{"requests": 1}
                     }
                 )
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant']}), data['accelerant'])
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star']}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 @cross_origin()

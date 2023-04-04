@@ -46,8 +46,6 @@ fetch(settings.API_ENDPOINT, {
 			document.body.appendChild(star)
 		}
 		worker.postMessage({ data: 'somedata', difficulty: 5 });
-		worker.onmessage = (event) => {
-			console.log(`Hash: ${event.data.hash}`);
-			};
+		worker.onmessage = (event) => {console.log(`Hash: ${event.data.hash}`);};
 	});
 
