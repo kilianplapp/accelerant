@@ -1,3 +1,5 @@
+import { settings } from "../settings.js";
+
 export function obfuscate(str) {
     const key = settings.KEY
 	let result = "";
