@@ -14,7 +14,7 @@ import re
 
 from pymongo import MongoClient
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
-
+from flask_cors import CORS
 #import backend
 from backend.check_mm import check_mm
 from backend.deobfuscate import deobfuscate
@@ -32,8 +32,11 @@ sentry_sdk.init(
     traces_sample_rate=1.0
 )
 
+
+
 # initialize flask
 app = Flask(__name__)
+CORS(app)
 
 # initialize mongodb
 client = MongoClient("mongodb+srv://kilianplapp:ubCpJxtuW4XzaDX8@sdt-0.bbusij8.mongodb.net/?retryWrites=true&w=majority")
@@ -70,6 +73,10 @@ def _corsify_actual_response(response,id):
 @app.route('/accelerant.js', methods=['GET'])
 def accelerant():
     return send_from_directory('dist', 'main.js')
+
+@app.route('/750.main.js', methods=['GET'])
+def main():
+    return send_from_directory('dist', '750.main.js')
 
 @app.route('/api/accelerant', methods=['POST', 'OPTIONS'])
 def mm():

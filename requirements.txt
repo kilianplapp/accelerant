@@ -4,3 +4,4 @@ pymongo
 gunicorn
 sentry-sdk[flask]
 pycryptodome
+flask_cors
