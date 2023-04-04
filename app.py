@@ -130,7 +130,7 @@ def mm():
                         "$inc":{"requests": 1}
                     }
                 )
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star'], "pow":profile['pow']}), data['accelerant'])
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star'], "pow":profile['pow'], "pow_challenge":pow_challenge, "difficulty":5}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
