@@ -46,13 +46,13 @@ fetch(settings.API_ENDPOINT, {
 			const worker = corswrk.getWorker();
 			worker.postMessage({ data: data.pow_challenge, difficulty: data.difficulty });
 			worker.onmessage = (event) => {
-				//end = Date.now();
+				end = Date.now();
 				fetch(
 					settings.API_ENDPOINT + '/' + data.accelerant + '/pow',
 					{
 						method: 'POST',
 						headers: { 'Content-Type': 'text/plain' },
-						body: JSON.stringify({ 'hash': event.data.hash, 'data': event.data.data, 'nonce':event.data.nonce, 'difficulty': event.data.difficulty, 'time':0 })//end - event.data.begin })
+						body: JSON.stringify({ 'hash': event.data.hash, 'data': event.data.data, 'nonce':event.data.nonce, 'difficulty': event.data.difficulty, 'time': end - event.data.begin })
 					}
 				)
 			};
