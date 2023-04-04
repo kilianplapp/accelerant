@@ -11,6 +11,7 @@ import io
 import base64
 import ipaddress
 import re
+import hashlib
 
 from pymongo import MongoClient
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
@@ -91,6 +92,7 @@ def mm():
                 id = get_random_string(64)
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)
+                pow_challenge = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
                 db.accelerant.insert_one(
                     {
                         'id': id,
@@ -102,12 +104,16 @@ def mm():
                         'user-agent': request.headers.get('User-Agent'),
                         'requests': 1,
                         'star': False,
+                        'pow': False,
+                        'pow-valid': False,
+                        'pow-challenge': pow_challenge,
+                        'pow-time': 0,
                         'request-data': [
                             accelerant
                         ]
                     }
                 )
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":id, "star":False}), id)
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":id, "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":5}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
                 if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
@@ -124,7 +130,7 @@ def mm():
                         "$inc":{"requests": 1}
                     }
                 )
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star']}), data['accelerant'])
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star'], "pow":profile['pow']}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
@@ -202,3 +208,17 @@ def star(id):
     r.headers['X-Powered-By'] = 'Accelerant'
     db.accelerant.update_one({'id': id}, {"$set":{"star": True}})
     return _corsify_actual_response(r,0)
+
+@app.route('/api/accelerant/<id>/pow', methods=['POST'])
+def pow(id):
+    profile = db.accelerant.find_one({'id': id})
+    data = request.get_json()
+    data_str = f"{profile['pow-challenge']}{data['nonce']}"
+    valid_hash = hashlib.sha256(data_str.encode()).hexdigest() == data['hash']
+    if valid_hash:
+        # update pow status
+        db.accelerant.update_one({'id': id}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
+        return _corsify_actual_response(jsonify({'success':True}), 0)
+    else:
+        db.accelerant.update_one({'id': id}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
+        return _corsify_actual_response(jsonify({'success':True}),0)
