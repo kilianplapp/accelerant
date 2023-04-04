@@ -201,4 +201,4 @@ def star(id):
     r.headers['Server'] = 'Accelerant'
     r.headers['X-Powered-By'] = 'Accelerant'
     db.accelerant.update_one({'id': id}, {"$set":{"star": True}})
-    return _corsify_actual_response(r)
+    return _corsify_actual_response(r,0)
