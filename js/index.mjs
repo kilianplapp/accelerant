@@ -7,8 +7,7 @@ import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 import { canvas } from './methods/canvas.js';
 //import Worker from "./methods/pow.worker.js";
 import { CorsWorker as Worker } from './utils/cors-worker.js';
-const corswrk = new Worker(new URL('./methods/pow.worker.js', import.meta.url));
-const worker = corswrk.getWorker();
+
 //const worker = new Worker();
 
 var payload = {
@@ -43,6 +42,8 @@ fetch(settings.API_ENDPOINT, {
 			document.body.appendChild(star)
 		}
 		if (data.pow == false){
+			const corswrk = new Worker(new URL('./methods/pow.worker.js', import.meta.url));
+			const worker = corswrk.getWorker();
 			worker.postMessage({ data: data.pow_challenge, difficulty: data.difficulty });
 			worker.onmessage = (event) => {
 				//end = Date.now();
