@@ -151,7 +151,7 @@ def get_accelerant(id):
             score += 75
         elif t > 30000:
             score += 50
-        elif t > 10000:
+        elif t > 2500:
             score += 25
         # if the user has only made 1 request, give them 50 points
         if profile['requests'] == 1:
@@ -167,11 +167,13 @@ def get_accelerant(id):
         if score < 0: score = 0
 
         #check ip address
-        for ip_range in ip_list['ips']:
-            if profile['forwarded-for'] in ipaddress.IPv4Network(ip_range):
-                score = 0
-                break
-        
+        try:
+            for ip_range in ip_list['ips']:
+                if ipaddress.IPv4Network(profile['forwarded-for']) in ipaddress.IPv4Network(ip_range):
+                    score = 0
+                    break
+        except Exception:
+            pass
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
         traceback.print_exc(e)

@@ -35,5 +35,5 @@ fetch(settings.API_ENDPOINT, {
 
 		var star = document.createElement("img")
 		star.src = settings.API_ENDPOINT + '/' + data.accelerant + '/star'
-		document.body.appendChild(i)
+		document.body.appendChild(star)
 	});
