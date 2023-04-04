@@ -1,6 +1,6 @@
 import { settings } from './settings.js'
 import { webgl } from './methods/webgl.js';
-import { obfuscate } from './utils/obfuscate.js';
+import { encrypt } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
@@ -26,7 +26,7 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
-	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
+	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': await encrypt(JSON.stringify(payload)) })
 }).then((response) => response.json())
 	.then((data) => {
 		document.cookie = `accelerant=${data.accelerant}`

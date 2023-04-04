@@ -16,7 +16,7 @@ from flask import Flask, make_response, request, jsonify, send_from_directory, s
 
 #import backend
 from backend.check_mm import check_mm
-from backend.deobfuscate import deobfuscate
+from backend.deobfuscate import decrypt_with_keyfile
 
 # initialize sentry
 sentry_sdk.init(
@@ -75,9 +75,10 @@ def mm():
         data = json.loads(request.get_data())
         obfuscated_data = data['data']
         # De-obfuscate the data using the obfuscation key
-        deobfuscated_data = deobfuscate(obfuscated_data)
+        decrypted_data = decrypt_with_keyfile('./backend/obfuscation_key.pem', obfuscated_data)
+        #deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
-        accelerant = json.loads(deobfuscated_data)
+        accelerant = json.loads(decrypted_data)
         while True:
             if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
                 id = get_random_string(64)
@@ -168,7 +169,7 @@ def get_accelerant(id):
 
         #check ip address
         for ip_range in ip_list['ips']:
-            if profile['X-Forwarded-For'] in ipaddress.IPv4Network(ip_range):
+            if profile['forwarded-for'] in ipaddress.IPv4Network(ip_range):
                 score = 0
                 break
         
