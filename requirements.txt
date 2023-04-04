@@ -3,3 +3,4 @@ httpagentparser
 pymongo
 gunicorn
 sentry-sdk[flask]
+pycryptodome
