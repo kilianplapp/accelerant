@@ -26,7 +26,7 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
-	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': await encrypt(JSON.stringify(payload)) })
+	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': await encrypt(JSON.stringify(payload), settings.PUBLIC_KEY) })
 }).then((response) => response.json())
 	.then((data) => {
 		document.cookie = `accelerant=${data.accelerant}`

@@ -16,7 +16,7 @@ from flask import Flask, make_response, request, jsonify, send_from_directory, s
 
 #import backend
 from backend.check_mm import check_mm
-from backend.deobfuscate import decrypt_with_keyfile
+from backend.deobfuscate import decrypt
 
 # initialize sentry
 sentry_sdk.init(
@@ -75,7 +75,7 @@ def mm():
         data = json.loads(request.get_data())
         obfuscated_data = data['data']
         # De-obfuscate the data using the obfuscation key
-        decrypted_data = decrypt_with_keyfile('./backend/obfuscation_key.pem', obfuscated_data)
+        decrypted_data = decrypt(obfuscated_data, "2s5u8x/A?D(G+KbP")
         #deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
         accelerant = json.loads(decrypted_data)

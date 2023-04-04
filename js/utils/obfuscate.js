@@ -1,33 +1,34 @@
-import { settings } from '../settings.js'
-
-export async function encrypt(message) {
-	// Convert the public key from PEM format to CryptoKey format
-	const pemKey = settings.PUBLIC_KEY
-	const parsedKey = await window.crypto.subtle.importKey(
-	  "spki",
-	  pemToBinary(pemKey),
-	  { name: "RSA-OAEP", hash: "SHA-256" },
-	  true,
+export async function encrypt(message, key) {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(message);
+  
+	const cryptoKey = await window.crypto.subtle.importKey(
+	  "raw",
+	  key,
+	  "AES-CBC",
+	  false,
 	  ["encrypt"]
 	);
   
-	// Encrypt the message using the public key
-	const encodedMessage = new TextEncoder().encode(message);
-	const encryptedData = await window.crypto.subtle.encrypt(
-	  { name: "RSA-OAEP" },
-	  parsedKey,
-	  encodedMessage
+	const iv = window.crypto.getRandomValues(new Uint8Array(16));
+  
+	const encrypted = await window.crypto.subtle.encrypt(
+	  {
+		name: "AES-CBC",
+		iv: iv,
+	  },
+	  cryptoKey,
+	  data
 	);
   
-	// Return the encrypted data as a base64-encoded string
-	return btoa(String.fromCharCode(...new Uint8Array(encryptedData)));
-  }
+	const encryptedArray = new Uint8Array(encrypted);
+	const ivArray = new Uint8Array(iv);
+	const combined = new Uint8Array(ivArray.length + encryptedArray.length);
   
-  // Helper function to convert PEM keys to binary format
-  function pemToBinary(pemKey) {
-	const lines = pemKey.split("\n");
-	const base64 = lines.slice(1, -1).join("");
-	return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+	combined.set(ivArray);
+	combined.set(encryptedArray, ivArray.length);
+  
+	return btoa(String.fromCharCode.apply(null, combined));
   }
 
 // export function obfuscate(str) {
