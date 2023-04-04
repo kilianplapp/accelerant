@@ -10,6 +10,7 @@ import sentry_sdk
 import io
 import base64
 import ipaddress
+import re
 
 from pymongo import MongoClient
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
@@ -45,6 +46,9 @@ def get_random_string(length):
 # initialize ip ban list
 with open('./backend/ip_list.json') as f:
     ip_list = json.load(f)
+
+with open('./backend/user_agents.json') as f:
+    user_agents = json.load(f)
 
 def _build_cors_preflight_response():
     response = make_response()
@@ -160,7 +164,7 @@ def get_accelerant(id):
         if profile['star'] == True:
             score += 15
         else:
-            score -= 15
+            score -= 15 * profile['requests']
         #if the score is greater than 100, set it to 100
         if score > 100: score = 100
         # if the score is less than 0, set it to 0
@@ -173,6 +177,13 @@ def get_accelerant(id):
                     score = 0
                     break
         except Exception:
+            pass
+        try:
+            for ua in user_agents:
+                if re.search(ua['pattern'], profile['user-agent']):
+                    score = 0
+                    break
+        except:
             pass
         return jsonify({"score": score, "success": True, "user-agent": profile['user-agent']})
     except Exception as e:
