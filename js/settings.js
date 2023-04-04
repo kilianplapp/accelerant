@@ -1,5 +1,5 @@
 
 export const settings = {
     API_ENDPOINT: "https://prod.kilianpl.app/api/accelerant",
-    PUBLIC_KEY: `2s5u8x/A?D(G+KbP`
+    KEY: "1KxIeFm2bC5xxEk89XGLVwRuDIRCqq0xlQRfYmiWkGXOPzFFsITZwp5RwMe6RWtn"
 }
