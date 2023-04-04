@@ -2,7 +2,7 @@ const path = require('path');
 var WebpackObfuscator = require('webpack-obfuscator');
 
 module.exports = {
-  entry: './src/index.mjs',
+  entry: './js/index.mjs',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),

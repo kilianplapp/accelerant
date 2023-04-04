@@ -26,7 +26,12 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
-	body: JSON.stringify({ 'accelerant':getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
-}).then((response)=> response.json())
-.then((data) =>document.cookie = `accelerant=${data.accelerant}`);
+	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
+}).then((response) => response.json())
+	.then((data) => {
+		document.cookie = `accelerant=${data.accelerant}`
 
+		var star = document.createElement("img")
+		star.src = settings.API_ENDPOINT + '/' + data.accelerant + '/star'
+		document.body.appendChild(i)
+	});
