@@ -4,13 +4,10 @@ import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
-
-// Initialize the agent at application startup.
-const fpPromise = FingerprintJS.load({monitoring: false})
-
+import { canvas } from './methods/canvas.js';
 var payload = {
 	"wbgl": await webgl(), // webgl information
+	"canv": await canvas(), // canvas fingerprint
 	"htnm": window.location.host || false, // hostname
 	"page": window.location.pathname || false, // page
 	"otrh": window.outerHeight || false, // outerheight
@@ -24,7 +21,6 @@ var payload = {
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
 	"afmt": detectSupportedAudioFormats(), // audio formats
-	"fpjs": await fpPromise.then(fp => fp.get()), // fingerprintjs
 	"msmv": await startRecording(25) // mouse movements
 }
 
