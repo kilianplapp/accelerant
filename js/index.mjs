@@ -4,10 +4,10 @@ import { obfuscate } from './utils/obfuscate.js';
 import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
-const FingerprintJS = require('@fingerprintjs/fingerprintjs')
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
 
 // Initialize the agent at application startup.
-const fpPromise = FingerprintJS.load()
+const fpPromise = FingerprintJS.load({monitoring: false})
 
 var payload = {
 	"wbgl": await webgl(), // webgl information
