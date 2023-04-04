@@ -16,7 +16,7 @@ from flask import Flask, make_response, request, jsonify, send_from_directory, s
 
 #import backend
 from backend.check_mm import check_mm
-from backend.deobfuscate import decrypt
+from backend.deobfuscate import deobfuscate
 
 # initialize sentry
 sentry_sdk.init(
@@ -75,10 +75,9 @@ def mm():
         data = json.loads(request.get_data())
         obfuscated_data = data['data']
         # De-obfuscate the data using the obfuscation key
-        decrypted_data = decrypt(obfuscated_data, "2s5u8x/A?D(G+KbP")
-        #deobfuscated_data = deobfuscate(obfuscated_data)
+        deobfuscated_data = deobfuscate(obfuscated_data)
         # Parse the JSON data
-        accelerant = json.loads(decrypted_data)
+        accelerant = json.loads(deobfuscated_data)
         while True:
             if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
                 id = get_random_string(64)
