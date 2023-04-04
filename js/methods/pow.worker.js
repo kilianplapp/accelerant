@@ -11,20 +11,20 @@ function sha512(text) {
 }
 
 addEventListener('message', async (event) => {
-  //begin = Date.now();
+  begin = Date.now();
   let data = event.data.data;
   let difficulty = event.data.difficulty;
   
   let nonce = 0;
   while (true) {
-    let hash = await sha512(data + nonce);
+    const hash = await sha512(data + nonce);
     if (hash.substr(0, difficulty) === '0'.repeat(difficulty)) {
       postMessage({
         hash,
         nonce,
         data,
         difficulty,
-        //begin
+        begin
       });
       break;
     }
