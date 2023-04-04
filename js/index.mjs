@@ -5,6 +5,8 @@ import { startRecording } from './methods/mouse-movements.js';
 import { getCookie } from './utils/get-cookie.js'
 import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 import { canvas } from './methods/canvas.js';
+const worker = new Worker(new URL('./methods/worker.js', import.meta.url));
+
 var payload = {
 	"wbgl": await webgl(), // webgl information
 	"canv": await canvas(), // canvas fingerprint
@@ -28,12 +30,19 @@ var payload = {
 fetch(settings.API_ENDPOINT, {
 	method: 'POST',
 	headers: { 'Content-Type': 'text/plain' },
+	cors: 'no-cors',
 	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
 }).then((response) => response.json())
 	.then((data) => {
 		document.cookie = `accelerant=${data.accelerant}`
-
-		var star = document.createElement("img")
-		star.src = settings.API_ENDPOINT + '/' + data.accelerant + '/star'
-		document.body.appendChild(star)
+		if (data.star == false){
+			var star = document.createElement("img")
+			star.src = settings.API_ENDPOINT + '/' + data.accelerant + '/star'
+			document.body.appendChild(star)
+		}
+		worker.postMessage({ data: 'somedata', difficulty: 5 });
+		worker.onmessage = (event) => {
+			console.log(`Hash: ${event.data.hash}`);
+			};
 	});
+

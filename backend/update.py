@@ -22,5 +22,5 @@ with open("ip_list.json", "w") as f:
 
 
 response = requests.get("https://raw.githubusercontent.com/monperrus/crawler-user-agents/master/crawler-user-agents.json")
-with open("user_agents.json", "w") as f:
-    f.write(response.text)
+with open("user_agents.json", "w", encoding='UTF-8') as f:
+    json.dump(response.json(), f, ensure_ascii=False, indent=4)
