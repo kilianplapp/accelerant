@@ -240,3 +240,4 @@ def msmv(id):
     accelerant = json.loads(deobfuscated_data)
 
     db.accelerant.update_one({'id': id}, {"$push":{"msmv": accelerant['msmv']}})
+    return _corsify_actual_response(jsonify({'success':True}),0)
