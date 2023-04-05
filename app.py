@@ -103,6 +103,7 @@ def mm():
                         'timestamp': int(time.time() * 1000),
                         'user-agent': request.headers.get('User-Agent'),
                         'requests': 1,
+                        'msmv': [],
                         'star': False,
                         'pow': False,
                         'pow-valid': False,
@@ -156,7 +157,8 @@ def get_accelerant(id):
                 if request[data] == False:
                     score -= 15
             # check for suspicious mouse movements
-            mm_sus = check_mm(request['msmv'])
+        for msmv in profile['msmv']:
+            mm_sus = check_mm(msmv)
             score -= mm_sus[0] * 5
             score -= mm_sus[1] * 5
         # calculate average time between requests
@@ -227,3 +229,14 @@ def pow(id):
     else:
         db.accelerant.update_one({'id': id}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
         return _corsify_actual_response(jsonify({'success':True}),0)
+
+@app.route('/api/accelerant/<id>/msmv', methods=['POST'])
+def msmv(id):
+    data = json.loads(request.get_data())
+    obfuscated_data = data['data']
+    # De-obfuscate the data using the obfuscation key
+    deobfuscated_data = deobfuscate(obfuscated_data)
+    # Parse the JSON data
+    accelerant = json.loads(deobfuscated_data)
+
+    db.accelerant.update_one({'id': id}, {"$push":{"msmv": accelerant['msmv']}})

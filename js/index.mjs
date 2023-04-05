@@ -26,7 +26,7 @@ var payload = {
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
 	"afmt": detectSupportedAudioFormats(), // audio formats
-	"msmv": await startRecording(25) // mouse movements
+	//"msmv": await startRecording(25) // mouse movements
 }
 
 // Make a POST request to the API endpoint with the obfuscated data as the request body
@@ -56,9 +56,14 @@ fetch(settings.API_ENDPOINT, {
 				)
 			};
 		}
-
+		
 	});
 
-function callback(data) {
-	fetch
+payload = {
+	"msmv": await startRecording(25) // mouse movements
 }
+fetch(settings.API_ENDPOINT + '/' + getCookie('accelerant') + '/msmv', {
+	method: 'POST',
+	headers: { 'Content-Type': 'text/plain' },
+	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
+})
