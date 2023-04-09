@@ -177,6 +177,13 @@ def get_accelerant(id):
             score += 15
         else:
             score -= 15 * profile['requests']
+    
+        # check if the user has responded to the pow challenge
+        if profile['pow'] == True:
+            if profile['pow-valid'] == True:
+                score += 15
+            else:
+                score -= 15
         #if the score is greater than 100, set it to 100
         if score > 100: score = 100
         # if the score is less than 0, set it to 0

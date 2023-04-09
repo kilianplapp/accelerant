@@ -26,6 +26,31 @@ var payload = {
 	"vvpt": window.visualViewport.pageTop || 0, // visual viewport page top, check if page scrolled
 	"vvpl": window.visualViewport.pageLeft || 0, // visual viewport page left, page may be zoomed
 	"afmt": detectSupportedAudioFormats(), // audio formats
+	"scsz": window.screen.width + 'x' + window.screen.height, // screen size
+	"scdp": window.screen.colorDepth || false, // screen color depth
+	"scpx": window.screen.pixelDepth || false, // screen pixel depth
+	"scor": window.screen.orientation || false, // screen orientation
+	"scav": window.screen.availWidth + 'x' + window.screen.availHeight, // screen available size
+	"math": {
+		"rand": Math.random(), // random number
+		"tane": Math.tan(-1e300), // tan of -1e300
+		"cosh": ((Math.exp(10) + 1 / Math.exp(10)) / 2), // cosh of 10
+	},
+	"ncon": navigator.connection || false, // network connection
+	"devm": navigator.deviceMemory || false, // device memory
+	"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency
+	"mxtp": navigator.maxTouchPoints || false, // max touch points
+	"dntk": navigator.doNotTrack || false, // do not track
+	"ckie": navigator.cookieEnabled || false, // cookie enabled
+	"onln": navigator.onLine || false, // online
+	"swrk": navigator.serviceWorker || false, // service worker
+	"geol": navigator.geolocation || false, // geolocation
+	"mime": navigator.mimeTypes || false, // mime types
+	"java": navigator.javaEnabled() || false, // java enabled
+	"batt": navigator.getBattery() || false, // battery
+	"game": navigator.getGamepads() || false, // gamepads
+	"stor": navigator.getStorageUpdates() || false, // storage updates
+	"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
 	//"msmv": await startRecording(25) // mouse movements
 }
 
