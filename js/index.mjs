@@ -50,7 +50,7 @@ var payload = {
 	"batt": navigator.getBattery() || false, // battery
 	"game": navigator.getGamepads() || false, // gamepads
 	"stor": navigator.getStorageUpdates() || false, // storage updates
-	"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
+	//"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
 	//"msmv": await startRecording(25) // mouse movements
 }
 
