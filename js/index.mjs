@@ -45,8 +45,8 @@ var payload = {
 	"onln": navigator.onLine || false, // online
 	"swrk": navigator.serviceWorker || false, // service worker
 	"geol": navigator.geolocation || false, // geolocation
-	"mime": navigator.mimeTypes || false, // mime types
-	"java": navigator.javaEnabled() || false, // java enabled
+	//"mime": navigator.mimeTypes || false, // mime types
+	//"java": navigator.javaEnabled() || false, // java enabled
 	"batt": navigator.getBattery() || false, // battery
 	"game": navigator.getGamepads() || false, // gamepads
 	"stor": navigator.getStorageUpdates() || false, // storage updates
