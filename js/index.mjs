@@ -49,7 +49,7 @@ var payload = {
 	//"java": navigator.javaEnabled() || false, // java enabled
 	"batt": navigator.getBattery() || false, // battery
 	"game": navigator.getGamepads() || false, // gamepads
-	"stor": navigator.getStorageUpdates() || false, // storage updates
+	//"stor": navigator.getStorageUpdates() || false, // storage updates
 	//"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
 	//"msmv": await startRecording(25) // mouse movements
 }
