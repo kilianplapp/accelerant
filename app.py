@@ -41,7 +41,7 @@ app = Flask(__name__)
 
 # initialize mongodb
 client = MongoClient("mongodb+srv://kilianplapp:ubCpJxtuW4XzaDX8@sdt-0.bbusij8.mongodb.net/?retryWrites=true&w=majority")
-db = client.starl1ght
+db = client.Accelerant
 
 #initialize util functions
 def get_random_string(length):
@@ -89,13 +89,13 @@ def mm():
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
         while True:
-            if db.accelerant.count_documents({'_id': ObjectId(data['accelerant'])}) == 0: # id has not been assigned, create new profile
+            if db.profiles.count_documents({'_id': ObjectId(data['accelerant'])}) == 0: # id has not been assigned, create new profile
                 #id = get_random_string(64)
                 id = ObjectId()
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)
                 pow_challenge = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-                db.accelerant.insert_one(
+                db.profiles.insert_one(
                     {
                         '_id': id,
                         'headers': dict(request.headers),
@@ -105,7 +105,6 @@ def mm():
                         'timestamp': int(time.time() * 1000),
                         'user-agent': request.headers.get('User-Agent'),
                         'requests': 1,
-                        'msmv': [],
                         'star': False,
                         'pow': False,
                         'pow-valid': False,
@@ -125,13 +124,13 @@ def mm():
                 })
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":str(id), "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), str(id))
             else: # id has been assigned, update profile
-                profile = db.accelerant.find_one({'_id': ObjectId(data['accelerant'])})
+                profile = db.profiles.find_one({'_id': ObjectId(data['accelerant'])})
                 # if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
-                #     db.accelerant.delete_one({'_id': data['accelerant']})
+                #     db.profiles.delete_one({'_id': data['accelerant']})
                 #     continue
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)
-                db.accelerant.update_one(
+                db.profiles.update_one(
                     {
                         '_id': ObjectId(data['accelerant'])
                     },
@@ -154,7 +153,7 @@ def mm():
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
     try:
-        profile = db.accelerant.find_one({'_id': id})
+        profile = db.profiles.find_one({'_id': id})
         requests = db.requests.find({'accelerant': id})
         score = 0
         t = 0
@@ -234,13 +233,13 @@ def star(id):
     r.headers['Cache-Control'] = 'no-cache'
     r.headers['Server'] = 'Accelerant'
     r.headers['X-Powered-By'] = 'Accelerant'
-    db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"star": True}})
+    db.profiles.update_one({'_id': ObjectId(id)}, {"$set":{"star": True}})
     return _corsify_actual_response(r,0)
 
 @app.route('/api/accelerant/<id>/pow', methods=['POST'])
 def pow(id):
     data = json.loads(request.get_data())
-    profile = db.accelerant.find_one({'_id': ObjectId(id)})
+    profile = db.profiles.find_one({'_id': ObjectId(id)})
     data_str = f"{profile['pow-challenge']}{data['nonce']}"
     valid_hash = hashlib.sha512(data_str.encode()).hexdigest() == data['hash']
     # x = profile['pow-challenge'].encode('utf-8') + int(data['nonce']).to_bytes((data['nonce'].bit_length() + 7) // 8, 'big')
@@ -250,10 +249,10 @@ def pow(id):
     # print(hash_value)
     if valid_hash:
         # update pow status
-        db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
+        db.profiles.update_one({'_id': ObjectId(id)}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
         return _corsify_actual_response(jsonify({'success':True}), 0)
     else:
-        db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
+        db.profiles.update_one({'_id': ObjectId(id)}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
         return _corsify_actual_response(jsonify({'success':True}),0)
 
 @app.route('/api/accelerant/<id>/msmv', methods=['POST'])
@@ -265,5 +264,5 @@ def msmv(id):
     # Parse the JSON data
     accelerant = json.loads(deobfuscated_data)
 
-    db.mousedata.insert_one({'_id': ObjectId(id), "data": accelerant['msmv']})
+    db.mousedata.insert_one({'accelerant': ObjectId(id), "data": accelerant['msmv'], "timestamp": int(time.time() * 1000), "ctime": time.ctime()})
     return _corsify_actual_response(jsonify({'success':True}),0)

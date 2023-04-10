@@ -90,7 +90,7 @@ fetch(settings.API_ENDPOINT, {
 			fetch(settings.API_ENDPOINT + '/' + data.accelerant + '/msmv', {
 				method: 'POST',
 				headers: { 'Content-Type': 'text/plain' },
-				body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
+				body: JSON.stringify({ 'accelerant': data.accelerant, 'data': obfuscate(JSON.stringify(payload)) })
 			})
 		})
 	});
