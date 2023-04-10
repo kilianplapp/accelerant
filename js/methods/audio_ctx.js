@@ -1,6 +1,8 @@
 import { hash } from '../utils/hash.js'
 var pxi_output;
 var pxi_full_buffer;
+var context;
+
 export function run_pxi_fp() {
     return new Promise((resolve, reject) => {
         let payload = {"hash":false, "pxio":false}
