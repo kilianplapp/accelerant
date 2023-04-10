@@ -1,6 +1,7 @@
 import { hash } from '../utils/hash.js'
+var pxi_output;
+var pxi_full_buffer;
 export function run_pxi_fp() {
-    var pxi_output;
     try {
         if (context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100), !context) {
             set_result("no_fp", "pxi_result");

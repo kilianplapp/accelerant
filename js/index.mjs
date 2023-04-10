@@ -29,7 +29,7 @@ var payload = {
 	"scsz": window.screen.width + 'x' + window.screen.height, // screen size
 	"scdp": window.screen.colorDepth || false, // screen color depth
 	"scpx": window.screen.pixelDepth || false, // screen pixel depth
-	"scor": window.screen.orientation.angle || false, // screen orientation
+	"scor": window.screen.orientation.angle || 0, // screen orientation
 	"scav": window.screen.availWidth + 'x' + window.screen.availHeight, // screen available size
 	"math": {
 		"rand": Math.random(), // random number
