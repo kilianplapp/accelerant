@@ -8,6 +8,7 @@ import { canvas } from './methods/canvas.js';
 //import Worker from "./methods/pow.worker.js";
 import { CorsWorker as Worker } from './utils/cors-worker.js';
 import { run_pxi_fp } from './methods/audio_ctx.js';
+import { getInstalledFonts } from './methods/fonts.js';
 //const worker = new Worker();
 
 var payload = {
@@ -39,13 +40,14 @@ var payload = {
 	//"ncon": navigator.connection || false, // network connection - BAD IOS COMPATIBILITY
 	//"devm": navigator.deviceMemory || false, // device memory - BAD IOS COMPATIBILITY
 	//"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency - BAD IOS COMPATIBILITY
-	"mxtp": navigator.maxTouchPoints || false, // max touch points
+	"mxtp": navigator.maxTouchPoints || 0, // max touch points
 	//"dntk": navigator.doNotTrack || false, // do not track - BAD IOS COMPATIBILITY
 	"ckie": navigator.cookieEnabled || false, // cookie enabled 
 	"onln": navigator.onLine || false, // online
 	"swrk": "serviceWorker" in navigator || false, // service worker
 	"geol": "geolocation" in navigator || false, // geolocation
 	"actx": await run_pxi_fp(), // audio context fingerprint
+	"font": getInstalledFonts(), // installed fonts
 	//"mime": navigator.mimeTypes || false, // mime types
 	//"java": navigator.javaEnabled() || false, // java enabled 
 	//"batt": navigator.getBattery() || false, // battery BAD COMPATIBILITY
