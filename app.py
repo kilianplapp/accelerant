@@ -89,7 +89,7 @@ def mm():
         # Parse the JSON data
         accelerant = json.loads(deobfuscated_data)
         while True:
-            if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
+            if db.accelerant.count_documents({'_id': ObjectId(data['accelerant'])}) == 0: # id has not been assigned, create new profile
                 #id = get_random_string(64)
                 id = ObjectId()
                 accelerant['ctime'] = time.ctime()
@@ -123,9 +123,9 @@ def mm():
                     'forwarded-for': request.headers.get('X-Forwarded-For'),
                     'user-agent': request.headers.get('User-Agent')
                 })
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":str(id), "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), id)
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":str(id), "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), str(id))
             else: # id has been assigned, update profile
-                profile = db.accelerant.find_one({'_id': data['accelerant']})
+                profile = db.accelerant.find_one({'_id': ObjectId(data['accelerant'])})
                 # if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
                 #     db.accelerant.delete_one({'_id': data['accelerant']})
                 #     continue
@@ -149,7 +149,7 @@ def mm():
                     'forwarded-for': request.headers.get('X-Forwarded-For'),
                     'user-agent': request.headers.get('User-Agent')
                 })
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star'], "pow":profile['pow'], "pow_challenge":profile['pow-challenge'], "difficulty":4}), data['accelerant'])
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":str(data['accelerant']), "star":profile['star'], "pow":profile['pow'], "pow_challenge":profile['pow-challenge'], "difficulty":4}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
