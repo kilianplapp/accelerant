@@ -86,11 +86,13 @@ fetch(settings.API_ENDPOINT, {
 		
 	});
 
-payload = {
-	"msmv": await startRecording(25) // mouse movements
+while (true) {
+	payload = {
+		"msmv": await startRecording(25) // mouse movements
+	}
+	fetch(settings.API_ENDPOINT + '/' + getCookie('accelerant') + '/msmv', {
+		method: 'POST',
+		headers: { 'Content-Type': 'text/plain' },
+		body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
+	})
 }
-fetch(settings.API_ENDPOINT + '/' + getCookie('accelerant') + '/msmv', {
-	method: 'POST',
-	headers: { 'Content-Type': 'text/plain' },
-	body: JSON.stringify({ 'accelerant': getCookie('accelerant'), 'data': obfuscate(JSON.stringify(payload)) })
-})
