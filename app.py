@@ -123,7 +123,7 @@ def mm():
                     'forwarded-for': request.headers.get('X-Forwarded-For'),
                     'user-agent': request.headers.get('User-Agent')
                 })
-                return _corsify_actual_response(jsonify({"success": True, "accelerant":id, "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), id)
+                return _corsify_actual_response(jsonify({"success": True, "accelerant":str(id), "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
                 if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
