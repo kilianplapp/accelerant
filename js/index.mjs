@@ -36,19 +36,18 @@ var payload = {
 		"tane": Math.tan(-1e300), // tan of -1e300
 		"cosh": ((Math.exp(10) + 1 / Math.exp(10)) / 2), // cosh of 10
 	},
-	"ncon": navigator.connection || false, // network connection
-	"devm": navigator.deviceMemory || false, // device memory
-	"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency
+	//"ncon": navigator.connection || false, // network connection
+	//"devm": navigator.deviceMemory || false, // device memory
+	//"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency
 	"mxtp": navigator.maxTouchPoints || false, // max touch points
-	"dntk": navigator.doNotTrack || false, // do not track
+	//"dntk": navigator.doNotTrack || false, // do not track
 	"ckie": navigator.cookieEnabled || false, // cookie enabled
 	"onln": navigator.onLine || false, // online
 	"swrk": navigator.serviceWorker || false, // service worker
 	"geol": navigator.geolocation || false, // geolocation
 	//"mime": navigator.mimeTypes || false, // mime types
 	//"java": navigator.javaEnabled() || false, // java enabled
-	"batt": navigator.getBattery() || false, // battery
-	"game": navigator.getGamepads() || false, // gamepads
+	//"batt": navigator.getBattery() || false, // battery
 	//"stor": navigator.getStorageUpdates() || false, // storage updates
 	//"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
 	//"msmv": await startRecording(25) // mouse movements
