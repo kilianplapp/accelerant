@@ -45,7 +45,7 @@ var payload = {
 	"onln": navigator.onLine || false, // online
 	"swrk": "serviceWorker" in navigator || false, // service worker
 	"geol": "geolocation" in navigator || false, // geolocation
-	"actx": run_pxi_fp(), // audio context fingerprint
+	"actx": await run_pxi_fp(), // audio context fingerprint
 	//"mime": navigator.mimeTypes || false, // mime types
 	//"java": navigator.javaEnabled() || false, // java enabled 
 	//"batt": navigator.getBattery() || false, // battery BAD COMPATIBILITY
