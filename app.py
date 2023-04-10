@@ -240,7 +240,7 @@ def star(id):
 @app.route('/api/accelerant/<id>/pow', methods=['POST'])
 def pow(id):
     data = json.loads(request.get_data())
-    profile = db.accelerant.find_one({'id': id})
+    profile = db.accelerant.find_one({'_id': id})
     data_str = f"{profile['pow-challenge']}{data['nonce']}"
     valid_hash = hashlib.sha512(data_str.encode()).hexdigest() == data['hash']
     # x = profile['pow-challenge'].encode('utf-8') + int(data['nonce']).to_bytes((data['nonce'].bit_length() + 7) // 8, 'big')
