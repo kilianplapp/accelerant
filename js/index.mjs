@@ -7,7 +7,7 @@ import { detectSupportedAudioFormats } from './methods/audio-formats.js';
 import { canvas } from './methods/canvas.js';
 //import Worker from "./methods/pow.worker.js";
 import { CorsWorker as Worker } from './utils/cors-worker.js';
-
+import { run_pxi_fp } from './methods/audio_ctx.js';
 //const worker = new Worker();
 
 var payload = {
@@ -29,27 +29,28 @@ var payload = {
 	"scsz": window.screen.width + 'x' + window.screen.height, // screen size
 	"scdp": window.screen.colorDepth || false, // screen color depth
 	"scpx": window.screen.pixelDepth || false, // screen pixel depth
-	"scor": window.screen.orientation || false, // screen orientation
+	"scor": window.screen.orientation.angle || false, // screen orientation
 	"scav": window.screen.availWidth + 'x' + window.screen.availHeight, // screen available size
 	"math": {
 		"rand": Math.random(), // random number
 		"tane": Math.tan(-1e300), // tan of -1e300
 		"cosh": ((Math.exp(10) + 1 / Math.exp(10)) / 2), // cosh of 10
 	},
-	//"ncon": navigator.connection || false, // network connection
-	//"devm": navigator.deviceMemory || false, // device memory
-	//"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency
+	//"ncon": navigator.connection || false, // network connection - BAD IOS COMPATIBILITY
+	//"devm": navigator.deviceMemory || false, // device memory - BAD IOS COMPATIBILITY
+	//"hdcy": navigator.hardwareConcurrency || false, // hardware concurrency - BAD IOS COMPATIBILITY
 	"mxtp": navigator.maxTouchPoints || false, // max touch points
-	//"dntk": navigator.doNotTrack || false, // do not track
-	"ckie": navigator.cookieEnabled || false, // cookie enabled
+	//"dntk": navigator.doNotTrack || false, // do not track - BAD IOS COMPATIBILITY
+	"ckie": navigator.cookieEnabled || false, // cookie enabled 
 	"onln": navigator.onLine || false, // online
-	"swrk": navigator.serviceWorker || false, // service worker
-	"geol": navigator.geolocation || false, // geolocation
+	"swrk": "serviceWorker" in navigator || false, // service worker
+	"geol": "geolocation" in navigator || false, // geolocation
+	"actx": run_pxi_fp(), // audio context fingerprint
 	//"mime": navigator.mimeTypes || false, // mime types
-	//"java": navigator.javaEnabled() || false, // java enabled
-	//"batt": navigator.getBattery() || false, // battery
-	//"stor": navigator.getStorageUpdates() || false, // storage updates
-	//"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps
+	//"java": navigator.javaEnabled() || false, // java enabled 
+	//"batt": navigator.getBattery() || false, // battery BAD COMPATIBILITY
+	//"stor": navigator.getStorageUpdates() || false, // storage updates BAD COMPATIBILITY
+	//"rapp": navigator.getInstalledRelatedApps() || false, // installed related apps BAD COMPATIBILITY
 	//"msmv": await startRecording(25) // mouse movements
 }
 
