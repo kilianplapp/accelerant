@@ -95,7 +95,7 @@ def mm():
                 pow_challenge = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
                 db.accelerant.insert_one(
                     {
-                        'id': id,
+                        '_id': id,
                         'headers': dict(request.headers),
                         'connection-ip': request.remote_addr,
                         'forwarded-for': request.headers.get('X-Forwarded-For'),
@@ -108,12 +108,19 @@ def mm():
                         'pow': False,
                         'pow-valid': False,
                         'pow-challenge': pow_challenge,
-                        'pow-time': 0,
-                        'request-data': [
-                            accelerant
-                        ]
+                        'pow-time': 0
                     }
                 )
+                db.requests.insert_one({
+                    'accelerant': id,
+                    'data': accelerant,
+                    'ctime': time.ctime(),
+                    'timestamp': int(time.time() * 1000),
+                    'headers': dict(request.headers),
+                    'connection-ip': request.remote_addr,
+                    'forwarded-for': request.headers.get('X-Forwarded-For'),
+                    'user-agent': request.headers.get('User-Agent')
+                })
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":id, "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), id)
             else: # id has been assigned, update profile
                 profile = db.accelerant.find_one({'id': data['accelerant']})
@@ -124,22 +131,32 @@ def mm():
                 accelerant['timestamp'] = int(time.time()* 1000)
                 db.accelerant.update_one(
                     {
-                        'id': data['accelerant']
+                        '_id': data['accelerant']
                     },
                     {
-                        "$push":{"request-data": accelerant},
                         "$inc":{"requests": 1}
                     }
                 )
+                db.requests.insert_one({
+                    'accelerant': data['accelerant'],
+                    'data': accelerant,
+                    'ctime': time.ctime(),
+                    'timestamp': int(time.time() * 1000),
+                    'headers': dict(request.headers),
+                    'connection-ip': request.remote_addr,
+                    'forwarded-for': request.headers.get('X-Forwarded-For'),
+                    'user-agent': request.headers.get('User-Agent')
+                })
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":data['accelerant'], "star":profile['star'], "pow":profile['pow'], "pow_challenge":profile['pow-challenge'], "difficulty":4}), data['accelerant'])
 
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
     try:
-        profile = db.accelerant.find_one({'id': id})
+        profile = db.accelerant.find_one({'_id': id})
+        requests = db.requests.find({'accelerant': id})
         score = 0
         t = 0
-        for request in profile['request-data']: # for request in session
+        for request in requests: # for request in session
             # add time between requests to total
             t += request['timestamp'] - profile['timestamp']
             # if the user has scrolled, add 5 points
@@ -215,7 +232,7 @@ def star(id):
     r.headers['Cache-Control'] = 'no-cache'
     r.headers['Server'] = 'Accelerant'
     r.headers['X-Powered-By'] = 'Accelerant'
-    db.accelerant.update_one({'id': id}, {"$set":{"star": True}})
+    db.accelerant.update_one({'_id': id}, {"$set":{"star": True}})
     return _corsify_actual_response(r,0)
 
 @app.route('/api/accelerant/<id>/pow', methods=['POST'])
@@ -231,10 +248,10 @@ def pow(id):
     # print(hash_value)
     if valid_hash:
         # update pow status
-        db.accelerant.update_one({'id': id}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
+        db.accelerant.update_one({'_id': id}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
         return _corsify_actual_response(jsonify({'success':True}), 0)
     else:
-        db.accelerant.update_one({'id': id}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
+        db.accelerant.update_one({'_id': id}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
         return _corsify_actual_response(jsonify({'success':True}),0)
 
 @app.route('/api/accelerant/<id>/msmv', methods=['POST'])
@@ -246,5 +263,5 @@ def msmv(id):
     # Parse the JSON data
     accelerant = json.loads(deobfuscated_data)
 
-    db.accelerant.update_one({'id': id}, {"$push":{"msmv": accelerant['msmv']}})
+    db.accelerant.update_one({'_id': id}, {"$push":{"msmv": accelerant['msmv']}})
     return _corsify_actual_response(jsonify({'success':True}),0)
