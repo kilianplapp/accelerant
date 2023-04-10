@@ -125,9 +125,9 @@ def mm():
                 })
                 return _corsify_actual_response(jsonify({"success": True, "accelerant":str(id), "star":False, "pow":False, "pow_challenge":pow_challenge, "difficulty":4}), id)
             else: # id has been assigned, update profile
-                profile = db.accelerant.find_one({'id': data['accelerant']})
+                profile = db.accelerant.find_one({'_id': data['accelerant']})
                 if profile['request-data'][-1]['timestamp'] < int(time.time()) - 1800000:
-                    db.accelerant.delete_one({'id': data['accelerant']})
+                    db.accelerant.delete_one({'_id': data['accelerant']})
                     continue
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)

