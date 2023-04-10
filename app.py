@@ -265,5 +265,5 @@ def msmv(id):
     # Parse the JSON data
     accelerant = json.loads(deobfuscated_data)
 
-    db.accelerant.update_one({'_id': ObjectId(id)}, {"$push":{"msmv": accelerant['msmv']}})
+    db.mousedata.insert_one({'_id': ObjectId(id), "data": accelerant['msmv']})
     return _corsify_actual_response(jsonify({'success':True}),0)
