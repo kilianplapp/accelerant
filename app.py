@@ -234,13 +234,13 @@ def star(id):
     r.headers['Cache-Control'] = 'no-cache'
     r.headers['Server'] = 'Accelerant'
     r.headers['X-Powered-By'] = 'Accelerant'
-    db.accelerant.update_one({'_id': id}, {"$set":{"star": True}})
+    db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"star": True}})
     return _corsify_actual_response(r,0)
 
 @app.route('/api/accelerant/<id>/pow', methods=['POST'])
 def pow(id):
     data = json.loads(request.get_data())
-    profile = db.accelerant.find_one({'_id': id})
+    profile = db.accelerant.find_one({'_id': ObjectId(id)})
     data_str = f"{profile['pow-challenge']}{data['nonce']}"
     valid_hash = hashlib.sha512(data_str.encode()).hexdigest() == data['hash']
     # x = profile['pow-challenge'].encode('utf-8') + int(data['nonce']).to_bytes((data['nonce'].bit_length() + 7) // 8, 'big')
@@ -250,10 +250,10 @@ def pow(id):
     # print(hash_value)
     if valid_hash:
         # update pow status
-        db.accelerant.update_one({'_id': id}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
+        db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"pow": True, "pow-time": data['time'], "pow-valid": True}})
         return _corsify_actual_response(jsonify({'success':True}), 0)
     else:
-        db.accelerant.update_one({'_id': id}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
+        db.accelerant.update_one({'_id': ObjectId(id)}, {"$set":{"pow":True, "pow-valid": False, "pow-time": data['time']}})
         return _corsify_actual_response(jsonify({'success':True}),0)
 
 @app.route('/api/accelerant/<id>/msmv', methods=['POST'])
@@ -265,5 +265,5 @@ def msmv(id):
     # Parse the JSON data
     accelerant = json.loads(deobfuscated_data)
 
-    db.accelerant.update_one({'_id': id}, {"$push":{"msmv": accelerant['msmv']}})
+    db.accelerant.update_one({'_id': ObjectId(id)}, {"$push":{"msmv": accelerant['msmv']}})
     return _corsify_actual_response(jsonify({'success':True}),0)
