@@ -14,6 +14,7 @@ import re
 import hashlib
 
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from flask import Flask, make_response, request, jsonify, send_from_directory, send_file
 
 #import backend
@@ -89,7 +90,8 @@ def mm():
         accelerant = json.loads(deobfuscated_data)
         while True:
             if db.accelerant.count_documents({'id': data['accelerant']}) == 0: # id has not been assigned, create new profile
-                id = get_random_string(64)
+                #id = get_random_string(64)
+                id = ObjectId()
                 accelerant['ctime'] = time.ctime()
                 accelerant['timestamp'] = int(time.time()* 1000)
                 pow_challenge = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -131,14 +133,14 @@ def mm():
                 accelerant['timestamp'] = int(time.time()* 1000)
                 db.accelerant.update_one(
                     {
-                        '_id': data['accelerant']
+                        '_id': ObjectId(data['accelerant'])
                     },
                     {
                         "$inc":{"requests": 1}
                     }
                 )
                 db.requests.insert_one({
-                    'accelerant': data['accelerant'],
+                    'accelerant': ObjectId(data['accelerant']),
                     'data': accelerant,
                     'ctime': time.ctime(),
                     'timestamp': int(time.time() * 1000),
