@@ -42,12 +42,11 @@ export function run_pxi_fp() {
                     sha1.push(evnt.renderedBuffer.getChannelData(0)[i].toString());
                 }
                 hash(sha1.join(',')).then(h => {
-                    pxi_full_buffer_hash = h
                     //console.log(pxi_full_buffer_hash);
                     for (var i = 4500; 5e3 > i; i++) {
                         pxi_output += Math.abs(evnt.renderedBuffer.getChannelData(0)[i]);
                     }
-                    payload = { "hash": pxi_full_buffer_hash, "pxio": pxi_output.toString() }
+                    payload = { "hash": h, "pxio": pxi_output.toString() }
                     pxi_compressor.disconnect();
                     resolve(payload);
                 })
