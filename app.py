@@ -153,7 +153,7 @@ def mm():
 @app.route('/api/accelerant/<id>', methods=['GET'])
 def get_accelerant(id):
     try:
-        profile = db.profiles.find_one({'_id': id})
+        profile = db.profiles.find_one({'_id': ObjectId(id)})
         requests = db.requests.find({'accelerant': id})
         score = 0
         t = 0
