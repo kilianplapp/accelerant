@@ -175,8 +175,8 @@ def get_accelerant(id):
                 if request[data] == False:
                     score -= 15
             # check for suspicious mouse movements
-        for msmv in profile['msmv']:
-            mm_sus = check_mm(msmv)
+        for msmv in db.mousedata.find({'accelerant': id}):
+            mm_sus = check_mm(msmv['data'])
             score -= mm_sus[0] * 5
             score -= mm_sus[1] * 5
         # calculate average time between requests
