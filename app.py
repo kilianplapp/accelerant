@@ -5,8 +5,6 @@ import json
 import random
 import traceback
 import string
-from sentry_sdk.integrations.flask import FlaskIntegration
-import sentry_sdk
 import io
 import base64
 import ipaddress
@@ -20,19 +18,6 @@ from flask import Flask, make_response, request, jsonify, send_from_directory, s
 #import backend
 from backend.check_mm import check_mm
 from backend.deobfuscate import deobfuscate
-
-# initialize sentry
-sentry_sdk.init(
-    dsn="https://20998e7297a14def82eba60f9a234352@o4504805411389440.ingest.sentry.io/4504952506941440",
-    integrations=[
-        FlaskIntegration(),
-    ],
-
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=0.5
-)
 
 
 

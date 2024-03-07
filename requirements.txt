@@ -2,6 +2,6 @@ flask
 httpagentparser
 pymongo
 gunicorn
-sentry-sdk[flask]
 pycryptodome
 flask_cors
+uwsgi
